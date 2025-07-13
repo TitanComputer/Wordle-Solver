@@ -1,5 +1,6 @@
 import os
 import requests
+import re
 
 
 class DictionaryDownloader:
@@ -22,8 +23,38 @@ class DictionaryDownloader:
             print(f"Error downloading file: {e}")
 
 
+class WordFilter:
+    def __init__(self, input_path="dict/words.txt", output_path="dict/words_filtered.txt"):
+        self.input_path = input_path
+        self.output_path = output_path
+        self.pattern = re.compile(r"^[a-z]{5}$")
+
+    def filter_and_save(self):
+        if not os.path.exists(self.input_path):
+            print(f"File {self.input_path} not found!")
+            return
+
+        words_set = set()
+
+        with open(self.input_path, "r", encoding="utf-8") as infile:
+            for line in infile:
+                word = line.strip().lower()
+                if self.pattern.match(word):
+                    words_set.add(word)
+
+        sorted_words = sorted(words_set)
+
+        with open(self.output_path, "w", encoding="utf-8") as outfile:
+            for word in sorted_words:
+                outfile.write(word + "\n")
+
+        print(f"Filtered words saved to {self.output_path}, total {len(sorted_words)} words.")
+
+
 if __name__ == "__main__":
     dict_url = "https://raw.githubusercontent.com/dwyl/english-words/master/words.txt"
 
     downloader = DictionaryDownloader(dict_url)
     downloader.download()
+    wf = WordFilter()
+    wf.filter_and_save()

@@ -3,6 +3,9 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+# CodeRunner
+tempCodeRunnerFile.py
+
 # C extensions
 *.so
 
