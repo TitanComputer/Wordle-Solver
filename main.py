@@ -62,21 +62,32 @@ class WordleSolverApp:
         self.dict_button.pack(fill=X, pady=5)
 
         self.dark_mode_var = tb.BooleanVar(value=False)
-        self.dark_switch = tb.Checkbutton(
+
+        self.dark_toggle = tb.Checkbutton(
             self.right_frame,
             text="Dark Mode",
             variable=self.dark_mode_var,
+            bootstyle="square-toggle",
             command=self.toggle_theme,
-            bootstyle="switch",
         )
-        self.dark_switch.pack(fill=X, pady=10)
+        self.dark_toggle.pack(fill=X, pady=10)
+
+    def get_all_entries(self):
+        entries = []
+        entries.extend(self.known_inputs)
+        entries.extend(self.unknown_inputs)
+        for row in self.excluded_inputs:
+            entries.extend(row)
+        return entries
 
     def create_entry_row(self, parent, num_entries):
         entries = []
         for _ in range(num_entries):
             sv = StringVar()
-            entry = tb.Entry(parent, textvariable=sv, width=2, justify="center")
-            entry.pack(side=LEFT, padx=2)
+            entry = tb.Entry(
+                parent, textvariable=sv, width=2, font=("Arial", 20), justify="center"  # کوچیک نگه‌دار تا مربع شه
+            )
+            entry.pack(side=LEFT, padx=4, pady=4, ipady=5)
             entry.bind("<KeyRelease>", self.limit_entry)
             entries.append(entry)
         return entries
@@ -85,13 +96,24 @@ class WordleSolverApp:
         widget = event.widget
         value = widget.get()
 
-        if len(value) > 1:
-            widget.delete(1, END)
-        elif len(value) == 1 and not value.isalpha():
+        if not value:
+            return
+
+        # فقط آخرین کاراکتر انگلیسی ASCII
+        if not value[-1].isalpha() or not value[-1].isascii():
             widget.delete(0, END)
-        elif len(value) == 1:
-            widget.delete(0, END)
-            widget.insert(0, value.upper())
+            return
+
+        # دقیقا یک کاراکتر و کوچک
+        widget.delete(0, END)
+        widget.insert(0, value[-1].upper())
+
+        # فوکوس خودکار روی ورودی بعدی
+        entries_list = self.get_all_entries()
+        if widget in entries_list:
+            idx = entries_list.index(widget)
+            if idx + 1 < len(entries_list):
+                entries_list[idx + 1].focus_set()
 
     def toggle_theme(self):
         self.is_dark_mode = not self.is_dark_mode
