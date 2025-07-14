@@ -16,7 +16,7 @@ class WordleSolverApp(tb.Window):
 
         self.title("Wordle Solver")
         self.withdraw()
-        self.minsize(400, 500)
+        self.minsize(400, 600)
         self.center_window()
         self.deiconify()
         self.last_entry_value = ""
@@ -26,7 +26,7 @@ class WordleSolverApp(tb.Window):
     def center_window(self):
         self.update_idletasks()
         width = 400
-        height = 500
+        height = 600
         x = (self.winfo_screenwidth() // 2) - (width // 2)
         y = (self.winfo_screenheight() // 2) - (height // 2)
         self.geometry(f"{width}x{height}+{x}+{y}")
@@ -138,29 +138,32 @@ class WordleSolverApp(tb.Window):
         widget = event.widget
         key = event.keysym
 
-        if key == "Delete":
-            widget.delete(0, END)
-            # reset style to default
-            widget.configure(style="Default.TEntry")
-
-            # move focus to previous entry if possible
-            entries_list = self.get_all_entries()
-            idx = entries_list.index(widget)
-            if idx > 0:
-                entries_list[idx - 1].focus_set()
-
-            return
-
         entries_list = self.get_all_entries()
         idx = entries_list.index(widget)
 
+        if key == "Delete":
+            widget.delete(0, END)
+            widget.configure(style="Default.TEntry")
+            if idx > 0:
+                entries_list[idx - 1].focus_set()
+            return
+
         if key == "BackSpace":
+            if widget.get():
+                widget.delete(0, END)
+            # Always reset style after clear
+            widget.configure(style="Default.TEntry")
+
+            # Update last_entry_value so next Backspace works correctly
+            self.last_entry_value = widget.get()
+
             if not widget.get() and self.last_entry_value == "":
                 if idx > 0:
                     entries_list[idx - 1].focus_set()
-        else:
-            if widget.get() and idx + 1 < len(entries_list):
-                entries_list[idx + 1].focus_set()
+            return
+
+        if widget.get() and idx + 1 < len(entries_list):
+            entries_list[idx + 1].focus_set()
 
         value = widget.get()
         if widget in self.known_inputs:
