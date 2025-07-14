@@ -4,21 +4,32 @@ from ttkbootstrap.constants import *
 from tkinter import StringVar
 
 
-class WordleSolverApp:
-    def __init__(self, master):
-        self.master = master
-        self.master.title("Wordle Solver")
-
-        self.style = tb.Style("litera")  # theme light
+class WordleSolverApp(tb.Window):
+    def __init__(self):
+        self.current_theme = "litera"  # light theme by default
+        super().__init__(themename=self.current_theme)
+        self.title("Wordle Solver")
+        self.withdraw()
+        self.minsize(400, 500)
+        self.center_window()
+        self.deiconify()
         self.is_dark_mode = False
 
         self.setup_layout()
 
+    def center_window(self):
+        self.update_idletasks()
+        width = 400
+        height = 500
+        x = (self.winfo_screenwidth() // 2) - (width // 2)
+        y = (self.winfo_screenheight() // 2) - (height // 2)
+        self.geometry(f"{width}x{height}+{x}+{y}")
+
     def setup_layout(self):
 
-        self.master.columnconfigure(0, weight=3)
-        self.master.columnconfigure(1, weight=1)
-        self.master.rowconfigure(0, weight=1)
+        self.columnconfigure(0, weight=3)
+        self.columnconfigure(1, weight=1)
+        self.rowconfigure(0, weight=1)
 
         self.left_frame = tb.Frame(self.master)
         self.left_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
@@ -99,16 +110,13 @@ class WordleSolverApp:
         if not value:
             return
 
-        # فقط آخرین کاراکتر انگلیسی ASCII
         if not value[-1].isalpha() or not value[-1].isascii():
             widget.delete(0, END)
             return
 
-        # دقیقا یک کاراکتر و کوچک
         widget.delete(0, END)
         widget.insert(0, value[-1].upper())
 
-        # فوکوس خودکار روی ورودی بعدی
         entries_list = self.get_all_entries()
         if widget in entries_list:
             idx = entries_list.index(widget)
@@ -128,6 +136,6 @@ class WordleSolverApp:
 
 
 if __name__ == "__main__":
-    app = tb.Window(themename="litera")  # theme light
-    WordleSolverApp(app)
+    # app = tb.Window(themename="litera")  # theme light
+    app = WordleSolverApp()
     app.mainloop()
