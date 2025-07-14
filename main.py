@@ -93,30 +93,50 @@ class WordleSolverApp(tb.Window):
 
     def create_entry_row(self, parent, num_entries):
         entries = []
+        vcmd = (self.register(self.validate_input), "%P")
         for _ in range(num_entries):
             sv = StringVar()
             entry = tb.Entry(
-                parent, textvariable=sv, width=2, font=("Arial", 20), justify="center"  # کوچیک نگه‌دار تا مربع شه
+                parent,
+                textvariable=sv,
+                width=2,
+                font=("Arial", 20),
+                justify="center",
+                validate="key",
+                validatecommand=vcmd,
             )
             entry.pack(side=LEFT, padx=4, pady=4, ipady=5)
-            entry.bind("<KeyRelease>", self.limit_entry)
+            entry.bind("<KeyRelease>", self.focus_next)
             entries.append(entry)
         return entries
 
-    def limit_entry(self, event):
+    def validate_input(self, proposed_value):
+        if not proposed_value:
+            return True  # خالی باشه اوکیه
+
+        if len(proposed_value) > 1:
+            return False
+
+        char = proposed_value
+
+        if not char.isalpha() or not char.isascii():
+            return False
+
+        self.after_idle(self.force_upper)
+        return True
+
+    def force_upper(self):
+        focused = self.focus_get()
+        if focused and isinstance(focused, tb.Entry):
+            value = focused.get()
+            focused.delete(0, END)
+            focused.insert(0, value.upper())
+
+    def focus_next(self, event):
         widget = event.widget
         value = widget.get()
-
         if not value:
             return
-
-        if not value[-1].isalpha() or not value[-1].isascii():
-            widget.delete(0, END)
-            return
-
-        widget.delete(0, END)
-        widget.insert(0, value[-1].upper())
-
         entries_list = self.get_all_entries()
         if widget in entries_list:
             idx = entries_list.index(widget)
