@@ -98,7 +98,7 @@ class WordleSolverApp(tb.Window):
                 parent,
                 textvariable=sv,
                 width=2,
-                font=("Arial", 20),
+                font=("Arial", 20, "bold"),
                 justify="center",
                 validate="key",
                 validatecommand=vcmd,
@@ -114,7 +114,7 @@ class WordleSolverApp(tb.Window):
     def validate_input(self, proposed_value):
 
         if not proposed_value:
-            return True  # خالی باشه اوکیه
+            return True
 
         if len(proposed_value) > 1:
             return False
@@ -138,6 +138,19 @@ class WordleSolverApp(tb.Window):
         widget = event.widget
         key = event.keysym
 
+        if key == "Delete":
+            widget.delete(0, END)
+            # reset style to default
+            widget.configure(style="Default.TEntry")
+
+            # move focus to previous entry if possible
+            entries_list = self.get_all_entries()
+            idx = entries_list.index(widget)
+            if idx > 0:
+                entries_list[idx - 1].focus_set()
+
+            return
+
         entries_list = self.get_all_entries()
         idx = entries_list.index(widget)
 
@@ -149,9 +162,7 @@ class WordleSolverApp(tb.Window):
             if widget.get() and idx + 1 < len(entries_list):
                 entries_list[idx + 1].focus_set()
 
-        # تغییر استایل ورودی بر اساس محتوا
         value = widget.get()
-
         if widget in self.known_inputs:
             new_style = "Known.TEntry" if value else "Default.TEntry"
         elif widget in self.unknown_inputs:
@@ -169,6 +180,5 @@ class WordleSolverApp(tb.Window):
 
 
 if __name__ == "__main__":
-    # app = tb.Window(themename="litera")  # theme light
     app = WordleSolverApp()
     app.mainloop()
