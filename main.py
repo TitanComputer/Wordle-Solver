@@ -6,14 +6,19 @@ from tkinter import StringVar
 
 class WordleSolverApp(tb.Window):
     def __init__(self):
-        self.current_theme = "litera"  # light theme by default
+        self.current_theme = "darkly"  # dark theme by default
         super().__init__(themename=self.current_theme)
+
+        self.style.configure("Default.TEntry", fieldbackground="#1e1e1e", foreground="#ffffff")
+        self.style.configure("Known.TEntry", fieldbackground="#538d4e", foreground="#ffffff")
+        self.style.configure("Unknown.TEntry", fieldbackground="#b59f3b", foreground="#ffffff")
+        self.style.configure("Excluded.TEntry", fieldbackground="#3a3a3c", foreground="#ffffff")
+
         self.title("Wordle Solver")
         self.withdraw()
         self.minsize(400, 500)
         self.center_window()
         self.deiconify()
-        self.is_dark_mode = False
         self.last_entry_value = ""
 
         self.setup_layout()
@@ -73,17 +78,6 @@ class WordleSolverApp(tb.Window):
         )
         self.dict_button.pack(fill=X, pady=5)
 
-        self.dark_mode_var = tb.BooleanVar(value=False)
-
-        self.dark_toggle = tb.Checkbutton(
-            self.right_frame,
-            text="Dark Mode",
-            variable=self.dark_mode_var,
-            bootstyle="square-toggle",
-            command=self.toggle_theme,
-        )
-        self.dark_toggle.pack(fill=X, pady=10)
-
     def get_all_entries(self):
         entries = []
         entries.extend(self.known_inputs)
@@ -108,6 +102,7 @@ class WordleSolverApp(tb.Window):
                 justify="center",
                 validate="key",
                 validatecommand=vcmd,
+                style="Default.TEntry",
             )
             entry.pack(side=LEFT, padx=4, pady=4, ipady=5)
             entry.bind("<KeyPress>", self.store_last_value)
@@ -154,10 +149,17 @@ class WordleSolverApp(tb.Window):
             if widget.get() and idx + 1 < len(entries_list):
                 entries_list[idx + 1].focus_set()
 
-    def toggle_theme(self):
-        self.is_dark_mode = not self.is_dark_mode
-        new_theme = "darkly" if self.is_dark_mode else "litera"
-        self.style.theme_use(new_theme)
+        # تغییر استایل ورودی بر اساس محتوا
+        value = widget.get()
+
+        if widget in self.known_inputs:
+            new_style = "Known.TEntry" if value else "Default.TEntry"
+        elif widget in self.unknown_inputs:
+            new_style = "Unknown.TEntry" if value else "Default.TEntry"
+        else:
+            new_style = "Excluded.TEntry" if value else "Default.TEntry"
+
+        widget.configure(style=new_style)
 
     def submit_query(self):
         print("Submit Query clicked")
