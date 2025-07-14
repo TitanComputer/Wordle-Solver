@@ -14,6 +14,7 @@ class WordleSolverApp(tb.Window):
         self.center_window()
         self.deiconify()
         self.is_dark_mode = False
+        self.last_entry_value = ""
 
         self.setup_layout()
 
@@ -91,6 +92,9 @@ class WordleSolverApp(tb.Window):
             entries.extend(row)
         return entries
 
+    def store_last_value(self, event):
+        self.last_entry_value = event.widget.get()
+
     def create_entry_row(self, parent, num_entries):
         entries = []
         vcmd = (self.register(self.validate_input), "%P")
@@ -106,11 +110,14 @@ class WordleSolverApp(tb.Window):
                 validatecommand=vcmd,
             )
             entry.pack(side=LEFT, padx=4, pady=4, ipady=5)
-            entry.bind("<KeyRelease>", self.focus_next)
+            entry.bind("<KeyPress>", self.store_last_value)
+            entry.bind("<KeyRelease>", self.handle_focus)
+
             entries.append(entry)
         return entries
 
     def validate_input(self, proposed_value):
+
         if not proposed_value:
             return True  # خالی باشه اوکیه
 
@@ -132,15 +139,19 @@ class WordleSolverApp(tb.Window):
             focused.delete(0, END)
             focused.insert(0, value.upper())
 
-    def focus_next(self, event):
+    def handle_focus(self, event):
         widget = event.widget
-        value = widget.get()
-        if not value:
-            return
+        key = event.keysym
+
         entries_list = self.get_all_entries()
-        if widget in entries_list:
-            idx = entries_list.index(widget)
-            if idx + 1 < len(entries_list):
+        idx = entries_list.index(widget)
+
+        if key == "BackSpace":
+            if not widget.get() and self.last_entry_value == "":
+                if idx > 0:
+                    entries_list[idx - 1].focus_set()
+        else:
+            if widget.get() and idx + 1 < len(entries_list):
                 entries_list[idx + 1].focus_set()
 
     def toggle_theme(self):
