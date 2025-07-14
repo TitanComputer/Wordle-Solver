@@ -6,28 +6,51 @@ from tkinter import StringVar
 
 class WordleSolverApp(tb.Window):
     def __init__(self):
-        self.current_theme = "darkly"  # dark theme by default
+        self.current_theme = "litera"  # light theme by default
         super().__init__(themename=self.current_theme)
 
-        self.style.configure("Default.TEntry", fieldbackground="#1e1e1e", foreground="#ffffff")
-        self.style.configure("Known.TEntry", fieldbackground="#538d4e", foreground="#ffffff")
-        self.style.configure("Unknown.TEntry", fieldbackground="#b59f3b", foreground="#ffffff")
-        self.style.configure("Excluded.TEntry", fieldbackground="#3a3a3c", foreground="#ffffff")
+        self.style.configure("Default.TEntry", fieldbackground="white", foreground="#000000")
+        self.style.configure("Known.TEntry", fieldbackground="#6aaa64", foreground="#ffffff")
+        self.style.configure("Unknown.TEntry", fieldbackground="#c9b458", foreground="#ffffff")
+        self.style.configure("Excluded.TEntry", fieldbackground="#787c7e", foreground="#ffffff")
 
         self.title("Wordle Solver")
         self.withdraw()
-        self.minsize(400, 560)
+        self.minsize(400, 570)
         self.resizable(False, False)
         self.center_window()
         self.deiconify()
         self.last_entry_value = ""
+        self.is_dark_mode = False
 
         self.setup_layout()
+
+    def toggle_theme(self):
+        self.is_dark_mode = not self.is_dark_mode
+        new_theme = "darkly" if self.is_dark_mode else "litera"
+        self.style.theme_use(new_theme)
+
+        # Reset entry styles after theme change
+        if self.is_dark_mode:
+            self.style.configure("Default.TEntry", fieldbackground="#121213", foreground="#ffffff")
+            self.style.configure("Known.TEntry", fieldbackground="#538d4e", foreground="#ffffff")
+            self.style.configure("Unknown.TEntry", fieldbackground="#b59f3b", foreground="#ffffff")
+            self.style.configure("Excluded.TEntry", fieldbackground="#3a3a3c", foreground="#ffffff")
+        else:
+            self.style.configure("Default.TEntry", fieldbackground="white", foreground="#000000")
+            self.style.configure("Known.TEntry", fieldbackground="#6aaa64", foreground="#ffffff")
+            self.style.configure("Unknown.TEntry", fieldbackground="#c9b458", foreground="#ffffff")
+            self.style.configure("Excluded.TEntry", fieldbackground="#787c7e", foreground="#ffffff")
+
+        # Update all empty entries to Default style so background matches theme
+        for entry in self.get_all_entries():
+            if not entry.get():
+                entry.configure(style="Default.TEntry")
 
     def center_window(self):
         self.update_idletasks()
         width = 400
-        height = 560
+        height = 570
         x = (self.winfo_screenwidth() // 2) - (width // 2)
         y = (self.winfo_screenheight() // 2) - (height // 2)
         self.geometry(f"{width}x{height}+{x}+{y}")
@@ -49,17 +72,17 @@ class WordleSolverApp(tb.Window):
 
     def setup_left_frame(self):
         # Known positions
-        known_frame = tb.Labelframe(self.left_frame, text="Known positions")
+        known_frame = tb.Labelframe(self.left_frame, text="   Known Positions   ")
         known_frame.pack(fill=X, pady=5)
         self.known_inputs = self.create_entry_row(known_frame, 5)
 
         # Unknown positions
-        unknown_frame = tb.Labelframe(self.left_frame, text="Unknown positions")
+        unknown_frame = tb.Labelframe(self.left_frame, text="   Unknown Positions   ")
         unknown_frame.pack(fill=X, pady=5)
         self.unknown_inputs = self.create_entry_row(unknown_frame, 5)
 
         # Excluded letters grid
-        excluded_frame = tb.Labelframe(self.left_frame, text="Excluded letters")
+        excluded_frame = tb.Labelframe(self.left_frame, text="   Not Included   ")
         excluded_frame.pack(fill=X, pady=5)
         self.excluded_inputs = []
         for _ in range(5):
@@ -78,6 +101,17 @@ class WordleSolverApp(tb.Window):
             self.right_frame, text="Get Dictionary", bootstyle=INFO, command=self.get_dictionary
         )
         self.dict_button.pack(fill=X, pady=5)
+
+        self.dark_mode_var = tb.BooleanVar(value=False)
+
+        self.dark_toggle = tb.Checkbutton(
+            self.right_frame,
+            text="Dark Mode",
+            variable=self.dark_mode_var,
+            bootstyle="square-toggle",
+            command=self.toggle_theme,
+        )
+        self.dark_toggle.pack(fill=X, pady=10)
 
     def get_all_entries(self):
         entries = []
