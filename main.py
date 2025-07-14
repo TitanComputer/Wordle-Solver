@@ -16,7 +16,8 @@ class WordleSolverApp(tb.Window):
 
         self.title("Wordle Solver")
         self.withdraw()
-        self.minsize(400, 600)
+        self.minsize(400, 560)
+        self.resizable(False, False)
         self.center_window()
         self.deiconify()
         self.last_entry_value = ""
@@ -26,7 +27,7 @@ class WordleSolverApp(tb.Window):
     def center_window(self):
         self.update_idletasks()
         width = 400
-        height = 600
+        height = 560
         x = (self.winfo_screenwidth() // 2) - (width // 2)
         y = (self.winfo_screenheight() // 2) - (height // 2)
         self.geometry(f"{width}x{height}+{x}+{y}")
@@ -137,9 +138,15 @@ class WordleSolverApp(tb.Window):
     def handle_focus(self, event):
         widget = event.widget
         key = event.keysym
+        char = event.char
 
         entries_list = self.get_all_entries()
         idx = entries_list.index(widget)
+
+        if key == "Return":
+            if idx + 1 < len(entries_list):
+                entries_list[idx + 1].focus_set()
+            return
 
         if key == "Delete":
             widget.delete(0, END)
@@ -151,16 +158,28 @@ class WordleSolverApp(tb.Window):
         if key == "BackSpace":
             if widget.get():
                 widget.delete(0, END)
-            # Always reset style after clear
             widget.configure(style="Default.TEntry")
-
-            # Update last_entry_value so next Backspace works correctly
             self.last_entry_value = widget.get()
-
             if not widget.get() and self.last_entry_value == "":
                 if idx > 0:
                     entries_list[idx - 1].focus_set()
             return
+
+        if char.isalpha() and char.isascii():
+            if len(widget.get()) == 1:
+                widget.delete(0, END)
+                widget.insert(0, char.upper())
+
+                if widget in self.known_inputs:
+                    widget.configure(style="Known.TEntry")
+                elif widget in self.unknown_inputs:
+                    widget.configure(style="Unknown.TEntry")
+                else:
+                    widget.configure(style="Excluded.TEntry")
+
+                if idx + 1 < len(entries_list):
+                    entries_list[idx + 1].focus_set()
+                return
 
         if widget.get() and idx + 1 < len(entries_list):
             entries_list[idx + 1].focus_set()
