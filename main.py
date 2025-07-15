@@ -326,25 +326,11 @@ class WordleSolverApp(tb.Window):
 
                 with open(file_path, "r", encoding="utf-8") as f:
                     self.words = tuple(line.strip() for line in f if line.strip())
-
                 print(f"Loaded {len(self.words)} words.")
 
-            # --------------------
-            # KNOWN POSITIONS FILTER
-            known_pattern = []
-            for entry in self.known_inputs:
-                value = entry.get().lower()
-                known_pattern.append(value if value else ".")
+            # Collect inputs
+            known_pattern = [entry.get().lower() for entry in self.known_inputs]
 
-            pattern = "".join(known_pattern)
-            print(f"Regex Pattern: {pattern}")
-            regex = re.compile(pattern)
-
-            candidates = [w for w in self.words if regex.match(w)]
-            print(f"After Known Positions: {len(candidates)} words")
-
-            # --------------------
-            # UNKNOWN POSITIONS FILTER
             unknowns = []
             for row in self.unknown_inputs:
                 for idx, entry in enumerate(row):
@@ -352,25 +338,19 @@ class WordleSolverApp(tb.Window):
                     if value:
                         unknowns.append((idx, value))
 
-            for idx, letter in unknowns:
-                candidates = [w for w in candidates if letter in w and w[idx] != letter]
-
-            # --------------------
-            # EXCLUDED LETTERS FILTER
             excluded_letters = set()
-
             for row in self.excluded_inputs:
                 for entry in row:
                     value = entry.get().lower()
                     if value:
                         excluded_letters.add(value)
 
-            if excluded_letters:
-                candidates = [w for w in candidates if all(ch not in w for ch in excluded_letters)]
-                print(f"Excluded Letters: {excluded_letters}")
+            # Use solver
+            solver = WordleSolver(self.words)
+            candidates = solver.filter_candidates(known_pattern, unknowns, excluded_letters)
 
-            print(f"After Excluded Letters: {len(candidates)} words")
-            print(candidates[:20])  # preview first 20
+            print(f"Results: {len(candidates)} words")
+            print(candidates[:20])
 
         threading.Thread(target=worker, daemon=True).start()
 
