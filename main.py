@@ -13,10 +13,11 @@ class WordleSolverApp(tb.Window):
         self.style.configure("Known.TEntry", fieldbackground="#6aaa64", foreground="#ffffff")
         self.style.configure("Unknown.TEntry", fieldbackground="#c9b458", foreground="#ffffff")
         self.style.configure("Excluded.TEntry", fieldbackground="#787c7e", foreground="#ffffff")
+        self.apply_custom_styles()
 
         self.title("Wordle Solver")
         self.withdraw()
-        self.minsize(500, 770)
+        self.minsize(550, 770)
         self.resizable(False, False)
         self.center_window()
         self.deiconify()
@@ -24,6 +25,13 @@ class WordleSolverApp(tb.Window):
         self.is_dark_mode = False
 
         self.setup_layout()
+
+    def apply_custom_styles(self):
+        # Buttons
+        self.style.configure("primary.TButton", font=("Arial", 16, "bold"))
+        self.style.configure("info.TButton", font=("Arial", 16, "bold"))
+        # Checkbutton
+        self.style.configure("Square.Toggle", font=("Arial", 12, "bold"))
 
     def toggle_theme(self):
         self.is_dark_mode = not self.is_dark_mode
@@ -47,9 +55,11 @@ class WordleSolverApp(tb.Window):
             if not entry.get():
                 entry.configure(style="Default.TEntry")
 
+        self.apply_custom_styles()
+
     def center_window(self):
         self.update_idletasks()
-        width = 500
+        width = 550
         height = 770
         x = (self.winfo_screenwidth() // 2) - (width // 2)
         y = (self.winfo_screenheight() // 2) - (height // 2)
