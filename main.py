@@ -16,7 +16,7 @@ class WordleSolverApp(tb.Window):
 
         self.title("Wordle Solver")
         self.withdraw()
-        self.minsize(400, 570)
+        self.minsize(500, 770)
         self.resizable(False, False)
         self.center_window()
         self.deiconify()
@@ -49,8 +49,8 @@ class WordleSolverApp(tb.Window):
 
     def center_window(self):
         self.update_idletasks()
-        width = 400
-        height = 570
+        width = 500
+        height = 770
         x = (self.winfo_screenwidth() // 2) - (width // 2)
         y = (self.winfo_screenheight() // 2) - (height // 2)
         self.geometry(f"{width}x{height}+{x}+{y}")
@@ -62,7 +62,7 @@ class WordleSolverApp(tb.Window):
         self.rowconfigure(0, weight=1)
 
         self.left_frame = tb.Frame(self.master)
-        self.left_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+        self.left_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=(2, 10))
 
         self.right_frame = tb.Frame(self.master)
         self.right_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
@@ -73,17 +73,17 @@ class WordleSolverApp(tb.Window):
     def setup_left_frame(self):
         # Known positions
         known_frame = tb.Labelframe(self.left_frame, text="   Known Positions   ")
-        known_frame.pack(fill=X, pady=5)
+        known_frame.pack(fill=X, pady=5, ipady=5)
         self.known_inputs = self.create_entry_row(known_frame, 5)
 
         # Unknown positions
         unknown_frame = tb.Labelframe(self.left_frame, text="   Unknown Positions   ")
-        unknown_frame.pack(fill=X, pady=5)
+        unknown_frame.pack(fill=X, pady=5, ipady=5)
         self.unknown_inputs = self.create_entry_row(unknown_frame, 5)
 
         # Excluded letters grid
         excluded_frame = tb.Labelframe(self.left_frame, text="   Not Included   ")
-        excluded_frame.pack(fill=X, pady=5)
+        excluded_frame.pack(fill=X, pady=5, ipady=3)
         self.excluded_inputs = []
         for _ in range(5):
             row_frame = tb.Frame(excluded_frame)
@@ -133,13 +133,13 @@ class WordleSolverApp(tb.Window):
                 parent,
                 textvariable=sv,
                 width=2,
-                font=("Arial", 20, "bold"),
+                font=("Arial", 30, "bold"),
                 justify="center",
                 validate="key",
                 validatecommand=vcmd,
                 style="Default.TEntry",
             )
-            entry.pack(side=LEFT, padx=4, pady=4, ipady=5)
+            entry.pack(side=LEFT, expand=True, padx=2, pady=2)
             entry.bind("<KeyPress>", self.store_last_value)
             entry.bind("<KeyRelease>", self.handle_focus)
 
