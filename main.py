@@ -33,6 +33,7 @@ class WordleSolverApp(tb.Window):
         # Buttons
         self.style.configure("primary.TButton", font=("Arial", 16, "bold"))
         self.style.configure("info.TButton", font=("Arial", 16, "bold"))
+        self.style.configure("warning.TButton", font=("Arial", 16, "bold"))
         # Checkbutton
         self.style.configure("Square.Toggle", font=("Arial", 12, "bold"))
 
@@ -67,6 +68,11 @@ class WordleSolverApp(tb.Window):
         x = (self.winfo_screenwidth() // 2) - (width // 2)
         y = (self.winfo_screenheight() // 2) - (height // 2)
         self.geometry(f"{width}x{height}+{x}+{y}")
+
+    def reset_inputs(self):
+        for entry in self.get_all_entries():
+            entry.delete(0, END)
+            entry.configure(style="Default.TEntry")
 
     def setup_layout(self):
 
@@ -110,15 +116,25 @@ class WordleSolverApp(tb.Window):
             self.excluded_inputs.append(row_inputs)
 
     def setup_right_frame(self):
+        # Use grid manager for better layout control
+        self.right_frame.columnconfigure(0, weight=1)
+        self.right_frame.rowconfigure(3, weight=1)  # space above the reset button
+
         self.submit_button = tb.Button(
-            self.right_frame, text="Submit Query", bootstyle=PRIMARY, command=self.submit_query
+            self.right_frame,
+            text="Submit Query",
+            bootstyle=PRIMARY,
+            command=self.submit_query,
         )
-        self.submit_button.pack(fill=X, pady=5, ipady=5)
+        self.submit_button.grid(row=0, column=0, sticky="ew", pady=5, ipady=5)
 
         self.dict_button = tb.Button(
-            self.right_frame, text="Get Dictionary", bootstyle=INFO, command=self.get_dictionary
+            self.right_frame,
+            text="Get Dictionary",
+            bootstyle=INFO,
+            command=self.get_dictionary,
         )
-        self.dict_button.pack(fill=X, pady=5, ipady=5)
+        self.dict_button.grid(row=1, column=0, sticky="ew", pady=5, ipady=5)
 
         self.dark_mode_var = tb.BooleanVar(value=False)
 
@@ -129,7 +145,15 @@ class WordleSolverApp(tb.Window):
             bootstyle="square-toggle",
             command=self.toggle_theme,
         )
-        self.dark_toggle.pack(fill=X, pady=10)
+        self.dark_toggle.grid(row=2, column=0, sticky="ew", pady=10)
+
+        self.reset_button = tb.Button(
+            self.right_frame,
+            text="Reset All",
+            bootstyle=WARNING,
+            command=self.reset_inputs,
+        )
+        self.reset_button.grid(row=4, column=0, sticky="ew,s", pady=5, ipady=5)
 
     def get_all_entries(self):
         entries = []
