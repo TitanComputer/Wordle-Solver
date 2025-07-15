@@ -90,29 +90,34 @@ class WordleSolverApp(tb.Window):
         self.setup_right_frame()
 
     def setup_left_frame(self):
+        self.left_frame.columnconfigure(0, weight=1)
+        self.left_frame.rowconfigure(0, weight=1)
+
         # Known positions
         known_frame = tb.Labelframe(self.left_frame, text="   Known Positions   ")
-        known_frame.pack(fill=X, pady=5, ipady=3)
+        known_frame.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
+        for i in range(5):
+            known_frame.columnconfigure(i, weight=1)
         self.known_inputs = self.create_entry_row(known_frame, 5)
 
         # Unknown positions
         self.unknown_inputs = []
         unknown_frame = tb.Labelframe(self.left_frame, text="   Unknown Positions   ")
-        unknown_frame.pack(fill=X, pady=5, ipady=3)
-        for _ in range(3):
-            row_frame = tb.Frame(unknown_frame)
-            row_frame.pack(fill=X, pady=2)
-            row_inputs = self.create_entry_row(row_frame, 5)
+        unknown_frame.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
+        for i in range(5):
+            unknown_frame.columnconfigure(i, weight=1)
+        for row_idx in range(3):
+            row_inputs = self.create_entry_row(unknown_frame, 5, row=row_idx)
             self.unknown_inputs.append(row_inputs)
 
         # Excluded letters grid
-        excluded_frame = tb.Labelframe(self.left_frame, text="   Not Included   ")
-        excluded_frame.pack(fill=X, pady=5, ipady=3)
         self.excluded_inputs = []
-        for _ in range(4):
-            row_frame = tb.Frame(excluded_frame)
-            row_frame.pack(fill=X, pady=2)
-            row_inputs = self.create_entry_row(row_frame, 5)
+        excluded_frame = tb.Labelframe(self.left_frame, text="   Not Included   ")
+        excluded_frame.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
+        for i in range(5):
+            excluded_frame.columnconfigure(i, weight=1)
+        for row_idx in range(4):
+            row_inputs = self.create_entry_row(excluded_frame, 5, row=row_idx)
             self.excluded_inputs.append(row_inputs)
 
     def setup_right_frame(self):
@@ -126,7 +131,7 @@ class WordleSolverApp(tb.Window):
             bootstyle=PRIMARY,
             command=self.submit_query,
         )
-        self.submit_button.grid(row=0, column=0, sticky="ew", pady=5, ipady=5)
+        self.submit_button.grid(row=0, column=0, sticky="ew", pady=(12, 5), ipady=5)
 
         self.dict_button = tb.Button(
             self.right_frame,
@@ -167,10 +172,10 @@ class WordleSolverApp(tb.Window):
     def store_last_value(self, event):
         self.last_entry_value = event.widget.get()
 
-    def create_entry_row(self, parent, num_entries):
+    def create_entry_row(self, parent, num_entries, row=0):
         entries = []
         vcmd = (self.register(self.validate_input), "%P")
-        for _ in range(num_entries):
+        for idx in range(num_entries):
             sv = StringVar()
             entry = tb.Entry(
                 parent,
@@ -182,7 +187,8 @@ class WordleSolverApp(tb.Window):
                 validatecommand=vcmd,
                 style="Default.TEntry",
             )
-            entry.pack(side=LEFT, expand=True, padx=2, pady=2)
+            entry.grid(row=row, column=idx, padx=4, pady=4, sticky="nsew")
+            parent.columnconfigure(idx, weight=1)
             entry.bind("<KeyPress>", self.store_last_value)
             entry.bind("<KeyRelease>", self.handle_focus)
 
