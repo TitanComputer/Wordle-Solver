@@ -2,6 +2,8 @@ from solver import *
 import ttkbootstrap as tb
 from ttkbootstrap.constants import *
 from tkinter import StringVar
+from tkinter import messagebox
+import threading
 
 
 class WordleSolverApp(tb.Window):
@@ -242,7 +244,38 @@ class WordleSolverApp(tb.Window):
         print("Submit Query clicked")
 
     def get_dictionary(self):
-        print("Get Dictionary clicked")
+        def worker():
+            dict_path = "dict/words.txt"
+            filtered_path = "dict/words_filtered.txt"
+            dict_url = "https://raw.githubusercontent.com/dwyl/english-words/master/words.txt"
+
+            if os.path.exists(dict_path):
+                result = messagebox.askyesno(
+                    "Dictionary Exists", "words.txt already exists.\nDo you want to re-download it?"
+                )
+                if result:
+                    downloader = DictionaryDownloader(dict_url)
+                    downloader.download()
+                    wf = WordFilter(dict_path, filtered_path)
+                    wf.filter_and_save()
+                    self.after(
+                        0, lambda: messagebox.showinfo("Done", "Dictionary downloaded and filtered successfully.")
+                    )
+                else:
+                    if not os.path.exists(filtered_path):
+                        wf = WordFilter(dict_path, filtered_path)
+                        wf.filter_and_save()
+                        self.after(0, lambda: messagebox.showinfo("Done", "Filtered dictionary created successfully."))
+                    else:
+                        self.after(0, lambda: messagebox.showinfo("Done", "Filtered dictionary already exists."))
+            else:
+                downloader = DictionaryDownloader(dict_url)
+                downloader.download()
+                wf = WordFilter(dict_path, filtered_path)
+                wf.filter_and_save()
+                self.after(0, lambda: messagebox.showinfo("Done", "Dictionary downloaded and filtered successfully."))
+
+        threading.Thread(target=worker, daemon=True).start()
 
 
 if __name__ == "__main__":
