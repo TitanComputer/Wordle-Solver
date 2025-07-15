@@ -25,6 +25,7 @@ class WordleSolverApp(tb.Window):
         self.deiconify()
         self.last_entry_value = ""
         self.is_dark_mode = False
+        self.words = None
 
         self.setup_layout()
 
@@ -240,9 +241,6 @@ class WordleSolverApp(tb.Window):
 
         widget.configure(style=new_style)
 
-    def submit_query(self):
-        print("Submit Query clicked")
-
     def get_dictionary(self):
         def worker():
             dict_path = "dict/words.txt"
@@ -274,6 +272,31 @@ class WordleSolverApp(tb.Window):
                 wf = WordFilter(dict_path, filtered_path)
                 wf.filter_and_save()
                 self.after(0, lambda: messagebox.showinfo("Done", "Dictionary downloaded and filtered successfully."))
+
+        threading.Thread(target=worker, daemon=True).start()
+
+    def submit_query(self):
+        def worker():
+            if self.words is None:
+                # First time loading
+                file_path = "dict/words_filtered.txt"
+                if not os.path.exists(file_path):
+                    self.after(
+                        0,
+                        lambda: messagebox.showwarning(
+                            "File Not Found", "words_filtered.txt not found!\nPlease click 'Get Dictionary' first."
+                        ),
+                    )
+                    return
+
+                with open(file_path, "r", encoding="utf-8") as f:
+                    # Using tuple is slightly faster for static data
+                    self.words = tuple(line.strip() for line in f if line.strip())
+
+                print(f"Loaded {len(self.words)} words.")
+
+            # After loading you can continue to filter/process the words here
+            print("Submit button clicked - words are ready for filtering!")
 
         threading.Thread(target=worker, daemon=True).start()
 
