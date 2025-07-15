@@ -52,7 +52,7 @@ class WordFilter:
 
 
 if __name__ == "__main__":
-    dict_url = "https://raw.githubusercontent.com/dwyl/english-words/master/words.txt"
+    dict_url = "https://raw.githubusercontent.com/tabatkins/wordle-list/refs/heads/main/words"
 
     downloader = DictionaryDownloader(dict_url)
     downloader.download()
