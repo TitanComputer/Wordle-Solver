@@ -17,7 +17,7 @@ class WordleSolverApp(tb.Window):
 
         self.title("Wordle Solver")
         self.withdraw()
-        self.minsize(550, 770)
+        self.minsize(550, 600)
         self.resizable(False, False)
         self.center_window()
         self.deiconify()
@@ -60,7 +60,7 @@ class WordleSolverApp(tb.Window):
     def center_window(self):
         self.update_idletasks()
         width = 550
-        height = 770
+        height = 600
         x = (self.winfo_screenwidth() // 2) - (width // 2)
         y = (self.winfo_screenheight() // 2) - (height // 2)
         self.geometry(f"{width}x{height}+{x}+{y}")
@@ -105,12 +105,12 @@ class WordleSolverApp(tb.Window):
         self.submit_button = tb.Button(
             self.right_frame, text="Submit Query", bootstyle=PRIMARY, command=self.submit_query
         )
-        self.submit_button.pack(fill=X, pady=5)
+        self.submit_button.pack(fill=X, pady=5, ipady=5)
 
         self.dict_button = tb.Button(
             self.right_frame, text="Get Dictionary", bootstyle=INFO, command=self.get_dictionary
         )
-        self.dict_button.pack(fill=X, pady=5)
+        self.dict_button.pack(fill=X, pady=5, ipady=5)
 
         self.dark_mode_var = tb.BooleanVar(value=False)
 
