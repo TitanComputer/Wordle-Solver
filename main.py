@@ -19,7 +19,7 @@ class WordleSolverApp(tb.Window):
 
         self.title("Wordle Solver")
         self.withdraw()
-        self.minsize(550, 600)
+        self.minsize(550, 650)
         self.resizable(False, False)
         self.center_window()
         self.deiconify()
@@ -63,7 +63,7 @@ class WordleSolverApp(tb.Window):
     def center_window(self):
         self.update_idletasks()
         width = 550
-        height = 600
+        height = 650
         x = (self.winfo_screenwidth() // 2) - (width // 2)
         y = (self.winfo_screenheight() // 2) - (height // 2)
         self.geometry(f"{width}x{height}+{x}+{y}")
@@ -86,19 +86,24 @@ class WordleSolverApp(tb.Window):
     def setup_left_frame(self):
         # Known positions
         known_frame = tb.Labelframe(self.left_frame, text="   Known Positions   ")
-        known_frame.pack(fill=X, pady=5, ipady=5)
+        known_frame.pack(fill=X, pady=5, ipady=3)
         self.known_inputs = self.create_entry_row(known_frame, 5)
 
         # Unknown positions
+        self.unknown_inputs = []
         unknown_frame = tb.Labelframe(self.left_frame, text="   Unknown Positions   ")
-        unknown_frame.pack(fill=X, pady=5, ipady=5)
-        self.unknown_inputs = self.create_entry_row(unknown_frame, 5)
+        unknown_frame.pack(fill=X, pady=5, ipady=3)
+        for _ in range(3):
+            row_frame = tb.Frame(unknown_frame)
+            row_frame.pack(fill=X, pady=2)
+            row_inputs = self.create_entry_row(row_frame, 5)
+            self.unknown_inputs.append(row_inputs)
 
         # Excluded letters grid
         excluded_frame = tb.Labelframe(self.left_frame, text="   Not Included   ")
         excluded_frame.pack(fill=X, pady=5, ipady=3)
         self.excluded_inputs = []
-        for _ in range(5):
+        for _ in range(4):
             row_frame = tb.Frame(excluded_frame)
             row_frame.pack(fill=X, pady=2)
             row_inputs = self.create_entry_row(row_frame, 5)
@@ -129,7 +134,8 @@ class WordleSolverApp(tb.Window):
     def get_all_entries(self):
         entries = []
         entries.extend(self.known_inputs)
-        entries.extend(self.unknown_inputs)
+        for row in self.unknown_inputs:
+            entries.extend(row)
         for row in self.excluded_inputs:
             entries.extend(row)
         return entries
@@ -219,7 +225,7 @@ class WordleSolverApp(tb.Window):
 
                 if widget in self.known_inputs:
                     widget.configure(style="Known.TEntry")
-                elif widget in self.unknown_inputs:
+                elif any(widget in row for row in self.unknown_inputs):
                     widget.configure(style="Unknown.TEntry")
                 else:
                     widget.configure(style="Excluded.TEntry")
@@ -234,7 +240,7 @@ class WordleSolverApp(tb.Window):
         value = widget.get()
         if widget in self.known_inputs:
             new_style = "Known.TEntry" if value else "Default.TEntry"
-        elif widget in self.unknown_inputs:
+        elif any(widget in row for row in self.unknown_inputs):
             new_style = "Unknown.TEntry" if value else "Default.TEntry"
         else:
             new_style = "Excluded.TEntry" if value else "Default.TEntry"
@@ -278,25 +284,63 @@ class WordleSolverApp(tb.Window):
     def submit_query(self):
         def worker():
             if self.words is None:
-                # First time loading
                 file_path = "dict/words_filtered.txt"
                 if not os.path.exists(file_path):
                     self.after(
                         0,
-                        lambda: messagebox.showwarning(
+                        lambda: messagebox.showerror(
                             "File Not Found", "words_filtered.txt not found!\nPlease click 'Get Dictionary' first."
                         ),
                     )
                     return
 
                 with open(file_path, "r", encoding="utf-8") as f:
-                    # Using tuple is slightly faster for static data
                     self.words = tuple(line.strip() for line in f if line.strip())
 
                 print(f"Loaded {len(self.words)} words.")
 
-            # After loading you can continue to filter/process the words here
-            print("Submit button clicked - words are ready for filtering!")
+            # --------------------
+            # KNOWN POSITIONS FILTER
+            known_pattern = []
+            for entry in self.known_inputs:
+                value = entry.get().lower()
+                known_pattern.append(value if value else ".")
+
+            pattern = "".join(known_pattern)
+            print(f"Regex Pattern: {pattern}")
+            regex = re.compile(pattern)
+
+            candidates = [w for w in self.words if regex.match(w)]
+            print(f"After Known Positions: {len(candidates)} words")
+
+            # --------------------
+            # UNKNOWN POSITIONS FILTER
+            unknowns = []
+            for row in self.unknown_inputs:
+                for idx, entry in enumerate(row):
+                    value = entry.get().lower()
+                    if value:
+                        unknowns.append((idx, value))
+
+            for idx, letter in unknowns:
+                candidates = [w for w in candidates if letter in w and w[idx] != letter]
+
+            # --------------------
+            # EXCLUDED LETTERS FILTER
+            excluded_letters = set()
+
+            for row in self.excluded_inputs:
+                for entry in row:
+                    value = entry.get().lower()
+                    if value:
+                        excluded_letters.add(value)
+
+            if excluded_letters:
+                candidates = [w for w in candidates if all(ch not in w for ch in excluded_letters)]
+                print(f"Excluded Letters: {excluded_letters}")
+
+            print(f"After Excluded Letters: {len(candidates)} words")
+            print(candidates[:20])  # preview first 20
 
         threading.Thread(target=worker, daemon=True).start()
 
