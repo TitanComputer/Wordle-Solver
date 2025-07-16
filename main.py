@@ -58,6 +58,7 @@ class WordleSolverApp(tb.Window):
         self.is_dark_mode = not self.is_dark_mode
         new_theme = "darkly" if self.is_dark_mode else "litera"
         self.style.theme_use(new_theme)
+        self.apply_custom_styles()
 
         # Reset entry styles after theme change
         if self.is_dark_mode:
@@ -65,18 +66,47 @@ class WordleSolverApp(tb.Window):
             self.style.configure("Known.TEntry", fieldbackground="#538d4e", foreground="#ffffff")
             self.style.configure("Unknown.TEntry", fieldbackground="#b59f3b", foreground="#ffffff")
             self.style.configure("Excluded.TEntry", fieldbackground="#3a3a3c", foreground="#ffffff")
+            self.style.configure(
+                "OutlinePrimaryBold.TButton",
+                font=("Arial", 14, "bold"),
+                foreground="#66b2ff",  # رنگ نوشته روشن‌تر برای دارک مود
+                background="#212529",  # پس‌زمینه تیره (مطابق dark theme)
+                borderwidth=2,
+                relief="solid",
+                padding=(10, 5),
+            )
+            self.style.map(
+                "OutlinePrimaryBold.TButton",
+                foreground=[("active", "#99ccff"), ("pressed", "#cce6ff")],
+                background=[("active", "#212529"), ("pressed", "#212529")],
+                bordercolor=[("active", "#99ccff"), ("pressed", "#cce6ff")],
+            )
+
         else:
             self.style.configure("Default.TEntry", fieldbackground="white", foreground="#000000")
             self.style.configure("Known.TEntry", fieldbackground="#6aaa64", foreground="#ffffff")
             self.style.configure("Unknown.TEntry", fieldbackground="#c9b458", foreground="#ffffff")
             self.style.configure("Excluded.TEntry", fieldbackground="#787c7e", foreground="#ffffff")
+            self.style.configure(
+                "OutlinePrimaryBold.TButton",
+                font=("Arial", 14, "bold"),
+                foreground="#0d6efd",
+                background="white",
+                borderwidth=2,
+                relief="solid",
+                padding=(10, 5),
+            )
+            self.style.map(
+                "OutlinePrimaryBold.TButton",
+                foreground=[("active", "#0a58ca"), ("pressed", "#084298")],
+                background=[("active", "white"), ("pressed", "white")],
+                bordercolor=[("active", "#0a58ca"), ("pressed", "#084298")],
+            )
 
         # Update all empty entries to Default style so background matches theme
         for entry in self.get_all_entries():
             if not entry.get():
                 entry.configure(style="Default.TEntry")
-
-        self.apply_custom_styles()
 
     def center_window(self):
         self.update_idletasks()
@@ -388,12 +418,24 @@ class WordleSolverApp(tb.Window):
             candidates = solver.filter_candidates(known_pattern, unknowns, excluded_letters)
 
             if len(candidates) == 0:
+                if (
+                    hasattr(self, "result_window")
+                    and self.result_window is not None
+                    and self.result_window.winfo_exists()
+                ):
+                    self.result_window.destroy()
                 self.after(
                     0, lambda: messagebox.showinfo("No Results", "No possible words found.\nPlease check your inputs.")
                 )
                 return
 
             if len(candidates) > 240:
+                if (
+                    hasattr(self, "result_window")
+                    and self.result_window is not None
+                    and self.result_window.winfo_exists()
+                ):
+                    self.result_window.destroy()
                 self.after(
                     0,
                     lambda: messagebox.showwarning(
