@@ -3,7 +3,6 @@ import ttkbootstrap as tb
 from ttkbootstrap.constants import *
 from tkinter import StringVar
 from tkinter import messagebox
-import tkinter as tk
 import threading
 
 
@@ -43,6 +42,8 @@ class WordleSolverApp(tb.Window):
             borderwidth=2,
             relief="solid",
             padding=(10, 5),
+            anchor="center",
+            justify="center",
         )
         self.style.map(
             "OutlinePrimaryBold.TButton",
@@ -500,8 +501,8 @@ class WordleSolverApp(tb.Window):
                 takefocus=False,
             )
 
-            btn.grid(row=r, column=c, padx=8, pady=8, sticky="ew")
-            scrollable_frame.columnconfigure(c, weight=1)
+            btn.grid(row=r, column=c, padx=8, pady=8)
+            scrollable_frame.columnconfigure(c, weight=0)
 
         # Mousewheel scrolling
         def _on_mousewheel(event):
