@@ -37,7 +37,7 @@ class WordleSolverApp(tb.Window):
         self.style.configure("warning.TButton", font=("Arial", 16, "bold"))
         self.style.configure(
             "OutlinePrimaryBold.TButton",
-            font=("Arial", 14, "bold"),
+            font=("Arial", 16, "bold"),
             foreground="#0d6efd",
             background="white",
             borderwidth=2,
@@ -333,12 +333,6 @@ class WordleSolverApp(tb.Window):
 
     def submit_query(self):
         def worker():
-            # Check if all inputs are empty
-            if all(not entry.get().strip() for entry in self.get_all_entries()):
-                self.after(
-                    0, lambda: messagebox.showinfo("No Input", "Please enter at least one letter before submitting.")
-                )
-                return
             if self.words is None:
                 file_path = "dict/words_filtered.txt"
                 if not os.path.exists(file_path):
@@ -352,11 +346,14 @@ class WordleSolverApp(tb.Window):
 
                 with open(file_path, "r", encoding="utf-8") as f:
                     self.words = tuple(line.strip() for line in f if line.strip())
-                print(f"Loaded {len(self.words)} words.")
 
-            # Collect inputs
+            if all(not entry.get().strip() for entry in self.get_all_entries()):
+                self.after(
+                    0, lambda: messagebox.showinfo("No Input", "Please enter at least one letter before submitting.")
+                )
+                return
+
             known_pattern = [entry.get().lower() for entry in self.known_inputs]
-
             unknowns = []
             for row in self.unknown_inputs:
                 for idx, entry in enumerate(row):
@@ -371,12 +368,40 @@ class WordleSolverApp(tb.Window):
                     if value:
                         excluded_letters.add(value)
 
+            # Check for overlap
+            known_letters = {ch for ch in known_pattern if ch}
+            unknown_letters = {v for _, v in unknowns}
+            overlap = (known_letters | unknown_letters) & excluded_letters
+            if overlap:
+                self.after(
+                    0,
+                    lambda: messagebox.showinfo(
+                        "Input Conflict",
+                        f"Conflict: letters {', '.join(overlap).upper()} "
+                        f"are both included and excluded.\nPlease correct your inputs.",
+                    ),
+                )
+                return
+
             # Use solver
             solver = WordleSolver(self.words)
             candidates = solver.filter_candidates(known_pattern, unknowns, excluded_letters)
 
-            print(f"Results: {len(candidates)} words")
-            print(candidates[:20])
+            if len(candidates) == 0:
+                self.after(
+                    0, lambda: messagebox.showinfo("No Results", "No possible words found.\nPlease check your inputs.")
+                )
+                return
+
+            if len(candidates) > 240:
+                self.after(
+                    0,
+                    lambda: messagebox.showwarning(
+                        "Too Many Results", "Too many possible words found (>240).\nPlease refine your inputs."
+                    ),
+                )
+                return
+
             self.after(0, lambda: self.show_results(candidates))
 
         threading.Thread(target=worker, daemon=True).start()
