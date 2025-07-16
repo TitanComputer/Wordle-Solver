@@ -458,7 +458,7 @@ class WordleSolverApp(tb.Window):
         title = f"Possible Answers ({num_results} found)" if num_results != 1 else "Possible Answer (1 found)"
         self.result_window.title(title)
 
-        self.result_window.geometry("500x650")
+        self.result_window.geometry("450x650")
         self.result_window.resizable(False, False)
         self.result_window.focus_set()
 
@@ -495,7 +495,7 @@ class WordleSolverApp(tb.Window):
             btn = tb.Button(
                 scrollable_frame,
                 text=word.upper(),
-                width=10,
+                width=9,
                 style="OutlinePrimaryBold.TButton",
                 cursor="arrow",
                 takefocus=False,
