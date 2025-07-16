@@ -3,6 +3,7 @@ import ttkbootstrap as tb
 from ttkbootstrap.constants import *
 from tkinter import StringVar
 from tkinter import messagebox
+import tkinter as tk
 import threading
 
 
@@ -34,6 +35,22 @@ class WordleSolverApp(tb.Window):
         self.style.configure("primary.TButton", font=("Arial", 16, "bold"))
         self.style.configure("info.TButton", font=("Arial", 16, "bold"))
         self.style.configure("warning.TButton", font=("Arial", 16, "bold"))
+        self.style.configure(
+            "OutlinePrimaryBold.TButton",
+            font=("Arial", 14, "bold"),
+            foreground="#0d6efd",
+            background="white",
+            borderwidth=2,
+            relief="solid",
+            padding=(10, 5),
+        )
+        self.style.map(
+            "OutlinePrimaryBold.TButton",
+            foreground=[("active", "#0a58ca"), ("pressed", "#084298")],
+            background=[("active", "white"), ("pressed", "white")],
+            bordercolor=[("active", "#0a58ca"), ("pressed", "#084298")],
+        )
+
         # Checkbutton
         self.style.configure("Square.Toggle", font=("Arial", 12, "bold"))
 
@@ -73,6 +90,9 @@ class WordleSolverApp(tb.Window):
         for entry in self.get_all_entries():
             entry.delete(0, END)
             entry.configure(style="Default.TEntry")
+        # Close previous result window if exists
+        if hasattr(self, "result_window") and self.result_window is not None and self.result_window.winfo_exists():
+            self.result_window.destroy()
 
     def setup_layout(self):
 
@@ -357,8 +377,87 @@ class WordleSolverApp(tb.Window):
 
             print(f"Results: {len(candidates)} words")
             print(candidates[:20])
+            self.after(0, lambda: self.show_results(candidates))
 
         threading.Thread(target=worker, daemon=True).start()
+
+    def show_results(self, candidates):
+        if hasattr(self, "result_window") and self.result_window is not None and self.result_window.winfo_exists():
+            self.result_window.destroy()
+
+        self.result_window = tb.Toplevel(self)
+        self.result_window.title("Results")
+        self.result_window.geometry("550x650")
+        self.result_window.resizable(False, False)
+        self.result_window.focus_set()
+
+        self.result_window.columnconfigure(0, weight=1)
+        self.result_window.rowconfigure(0, weight=1)
+
+        labelframe = tb.Labelframe(self.result_window, text="Possible Answers")
+        labelframe.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+        labelframe.columnconfigure(0, weight=1)
+        labelframe.rowconfigure(0, weight=1)
+
+        container = tb.Frame(labelframe)
+        container.grid(row=0, column=0, sticky="nsew")
+        labelframe.columnconfigure(0, weight=1)
+        labelframe.rowconfigure(0, weight=1)
+
+        canvas = tb.Canvas(container)
+        scrollbar = tb.Scrollbar(container, orient="vertical", command=canvas.yview)
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        canvas.grid(row=0, column=0, sticky="nsew")
+        scrollbar.grid(row=0, column=1, sticky="ns")
+        container.columnconfigure(0, weight=1)
+        container.rowconfigure(0, weight=1)
+
+        scrollable_frame = tb.Frame(canvas)
+        scrollable_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+
+        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+
+        max_cols = 3
+        for idx, word in enumerate(candidates):
+            r, c = divmod(idx, max_cols)
+            btn = tb.Button(
+                scrollable_frame,
+                text=word.upper(),
+                width=11,
+                style="OutlinePrimaryBold.TButton",
+                cursor="arrow",
+                takefocus=False,
+            )
+
+            btn.grid(row=r, column=c, padx=8, pady=8, sticky="ew")
+            scrollable_frame.columnconfigure(c, weight=1)
+
+        # Mousewheel scrolling
+        def _on_mousewheel(event):
+            content_height = canvas.bbox("all")[3]
+            visible_height = canvas.winfo_height()
+            if content_height > visible_height:
+                canvas.yview_scroll(-1 * int(event.delta / 120), "units")
+
+        def _on_mousewheel_mac(event):
+            content_height = canvas.bbox("all")[3]
+            visible_height = canvas.winfo_height()
+            if content_height > visible_height:
+                canvas.yview_scroll(-1 * int(event.delta), "units")
+
+        system = self.result_window.tk.call("tk", "windowingsystem")
+        if system == "aqua":
+            self.result_window.bind_all("<MouseWheel>", _on_mousewheel_mac)
+        else:
+            self.result_window.bind_all("<MouseWheel>", _on_mousewheel)
+
+        # Optional: Unbind on window close to avoid affecting main window
+        def on_close():
+            self.result_window.unbind_all("<MouseWheel>")
+            self.result_window.destroy()
+
+        self.result_window.protocol("WM_DELETE_WINDOW", on_close)
 
 
 if __name__ == "__main__":
