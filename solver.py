@@ -65,6 +65,8 @@ class WordleSolver:
 
         for idx, letter in unknowns:
             candidates = [w for w in candidates if letter in w and w[idx] != letter]
+        if unknowns:
+            print(f"After Unknown Positions: {len(candidates)} words")
 
         if excluded_letters:
             candidates = [w for w in candidates if all(ch not in w for ch in excluded_letters)]

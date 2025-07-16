@@ -37,7 +37,7 @@ class WordleSolverApp(tb.Window):
         self.style.configure("warning.TButton", font=("Arial", 16, "bold"))
         self.style.configure(
             "OutlinePrimaryBold.TButton",
-            font=("Arial", 16, "bold"),
+            font=("Arial", 14, "bold"),
             foreground="#0d6efd",
             background="white",
             borderwidth=2,
@@ -411,15 +411,18 @@ class WordleSolverApp(tb.Window):
             self.result_window.destroy()
 
         self.result_window = tb.Toplevel(self)
-        self.result_window.title("Results")
-        self.result_window.geometry("550x650")
+        num_results = len(candidates)
+        title = f"Possible Answers ({num_results} found)" if num_results != 1 else "Possible Answer (1 found)"
+        self.result_window.title(title)
+
+        self.result_window.geometry("500x650")
         self.result_window.resizable(False, False)
         self.result_window.focus_set()
 
         self.result_window.columnconfigure(0, weight=1)
         self.result_window.rowconfigure(0, weight=1)
 
-        labelframe = tb.Labelframe(self.result_window, text="Possible Answers")
+        labelframe = tb.Labelframe(self.result_window, text="   Possible Answers   ")
         labelframe.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
         labelframe.columnconfigure(0, weight=1)
         labelframe.rowconfigure(0, weight=1)
@@ -449,7 +452,7 @@ class WordleSolverApp(tb.Window):
             btn = tb.Button(
                 scrollable_frame,
                 text=word.upper(),
-                width=11,
+                width=10,
                 style="OutlinePrimaryBold.TButton",
                 cursor="arrow",
                 takefocus=False,
