@@ -313,6 +313,12 @@ class WordleSolverApp(tb.Window):
 
     def submit_query(self):
         def worker():
+            # Check if all inputs are empty
+            if all(not entry.get().strip() for entry in self.get_all_entries()):
+                self.after(
+                    0, lambda: messagebox.showinfo("No Input", "Please enter at least one letter before submitting.")
+                )
+                return
             if self.words is None:
                 file_path = "dict/words_filtered.txt"
                 if not os.path.exists(file_path):
