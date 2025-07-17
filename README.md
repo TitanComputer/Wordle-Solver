@@ -1,6 +1,7 @@
 # 💻 Wordle Solver
 
-This is a graphical Wordle Solver application built with Python.
+This is a graphical Wordle Solver application built with Python and `ttkbootstrap`.
+This application helps you solve Wordle puzzles more easily by narrowing down possible answers based on your input.
 
 ## ❓ What is Wordle?
 
