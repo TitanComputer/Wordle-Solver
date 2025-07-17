@@ -7,7 +7,9 @@ This application helps you solve Wordle puzzles more easily by narrowing down po
 ## ❓ What is Wordle?
 
 [Wordle](https://www.nytimes.com/games/wordle/index.html) is a word-guessing game where the player has 6 attempts to guess a hidden 5-letter word.
+
 After each guess, the game gives feedback about the correctness and position of each letter using color codes.
+
 This tool helps users find possible answers based on the feedback from their previous guesses.
 
 ## 🚀 Features
@@ -56,7 +58,7 @@ When you open the program:
 
 6. **Use the "Reset" button** if you want to start over.
 
-7. **Optional: Toggle Dark Mode** using the ☀️ / 🌙 icon in the corner.
+7. **Optional: Toggle Dark Mode** using the Dark Mode toggle to change the application's theme.
 
 ---
 
