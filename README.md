@@ -105,8 +105,9 @@ wordle_solver/
 │
 ├── main.py                     # Main application entry point
 ├── solver.py                   # Application core logic
-├── dict/words.txt              # Dictionary of english words
-├── dict/words_filtered.txt     # Dictionary of valid 5-letter words
+├── dict/
+│   ├── words.txt               # Dictionary of english words
+│   └── words_filtered.txt      # Dictionary of valid 5-letter words
 ├── README.md                   # Project documentation
 └── requirements.txt            # Python dependencies
 ```
