@@ -419,24 +419,12 @@ class WordleSolverApp(tb.Window):
             candidates = solver.filter_candidates(known_pattern, unknowns, excluded_letters)
 
             if len(candidates) == 0:
-                if (
-                    hasattr(self, "result_window")
-                    and self.result_window is not None
-                    and self.result_window.winfo_exists()
-                ):
-                    self.result_window.destroy()
                 self.after(
                     0, lambda: messagebox.showinfo("No Results", "No possible words found.\nPlease check your inputs.")
                 )
                 return
 
             if len(candidates) > 240:
-                if (
-                    hasattr(self, "result_window")
-                    and self.result_window is not None
-                    and self.result_window.winfo_exists()
-                ):
-                    self.result_window.destroy()
                 self.after(
                     0,
                     lambda: messagebox.showwarning(
@@ -465,7 +453,9 @@ class WordleSolverApp(tb.Window):
         self.result_window.columnconfigure(0, weight=1)
         self.result_window.rowconfigure(0, weight=1)
 
-        labelframe = tb.Labelframe(self.result_window, text="   Possible Answers   ")
+        labelframe = tb.Labelframe(
+            self.result_window, text=f"   Possible Answers   " if num_results != 1 else "   Possible Answer   "
+        )
         labelframe.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
         labelframe.columnconfigure(0, weight=1)
         labelframe.rowconfigure(0, weight=1)
