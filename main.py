@@ -117,6 +117,23 @@ class WordleSolverApp(tb.Window):
         y = (self.winfo_screenheight() // 2) - (height // 2)
         self.geometry(f"{width}x{height}+{x}+{y}")
 
+    def center_main_and_result(self, result_width, result_height):
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+
+        self.update_idletasks()
+        main_width = self.winfo_width()
+        main_height = self.winfo_height()
+
+        total_width = main_width + result_width
+        total_height = max(main_height, result_height)
+
+        x = (screen_width - total_width) // 2
+        y = (screen_height - total_height) // 2
+
+        self.geometry(f"{main_width}x{main_height}+{x}+{y}")
+        self.result_window.geometry(f"{result_width}x{result_height}+{x + main_width}+{y}")
+
     def reset_inputs(self):
         for entry in self.get_all_entries():
             entry.delete(0, END)
@@ -124,6 +141,7 @@ class WordleSolverApp(tb.Window):
         # Close previous result window if exists
         if hasattr(self, "result_window") and self.result_window is not None and self.result_window.winfo_exists():
             self.result_window.destroy()
+            self.center_window()
 
     def setup_layout(self):
 
@@ -494,6 +512,8 @@ class WordleSolverApp(tb.Window):
             btn.grid(row=r, column=c, padx=8, pady=8)
             scrollable_frame.columnconfigure(c, weight=0)
 
+        self.center_main_and_result(450, 650)
+
         # Mousewheel scrolling
         def _on_mousewheel(event):
             content_height = canvas.bbox("all")[3]
@@ -517,6 +537,7 @@ class WordleSolverApp(tb.Window):
         def on_close():
             self.result_window.unbind_all("<MouseWheel>")
             self.result_window.destroy()
+            self.center_window()
 
         self.result_window.protocol("WM_DELETE_WINDOW", on_close)
 
