@@ -70,8 +70,8 @@ class WordleSolverApp(tb.Window):
             self.style.configure(
                 "OutlinePrimaryBold.TButton",
                 font=("Arial", 14, "bold"),
-                foreground="#66b2ff",  # رنگ نوشته روشن‌تر برای دارک مود
-                background="#212529",  # پس‌زمینه تیره (مطابق dark theme)
+                foreground="#66b2ff",
+                background="#212529",
                 borderwidth=2,
                 relief="solid",
                 padding=(10, 5),
