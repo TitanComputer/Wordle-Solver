@@ -17,6 +17,7 @@ This tool helps users find possible answers based on the feedback from their pre
 
 ## 🖼️ Screenshots
 
+<img width="1009" height="682" alt="Untitled" src="https://github.com/user-attachments/assets/8b3aa23a-5563-4748-8102-61c8fe42bd64" />
 
 
 ## 📥 Download
@@ -39,10 +40,10 @@ When you open the program:
 1. **Enter known letters in the Known Positions row**  
    These are letters in the correct position (🟩). If you know a letter must be at a certain spot, type it in that position. Leave unknown spots empty.
 
-2. **Enter misplaced letters in the Unknown Positions row**  
+2. **Enter misplaced letters in the Unknown Positions rows**  
    These are letters that are in the word, but not in the correct position (🟨). You can type multiple letters per box, separated by spaces, if needed.
 
-3. **Enter excluded letters in the Not Included row**  
+3. **Enter excluded letters in the Not Included rows**  
    These are letters that are definitely **not** in the word (⬛️). Type all such letters in the input box.
 
 4. **Click the "Submit Query" button**  
