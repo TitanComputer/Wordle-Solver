@@ -1,12 +1,13 @@
 # 💻 Wordle Solver
 
 This is a graphical Wordle Solver application built with Python and `ttkbootstrap`.
+
 This application helps you solve Wordle puzzles more easily by narrowing down possible answers based on your input.
 
 ## ❓ What is Wordle?
 
-[Wordle](https://www.nytimes.com/games/wordle/index.html) is a word-guessing game where the player has 6 attempts to guess a hidden 5-letter word. After each guess, the game gives feedback about the correctness and position of each letter using color codes.
-
+[Wordle](https://www.nytimes.com/games/wordle/index.html) is a word-guessing game where the player has 6 attempts to guess a hidden 5-letter word.
+After each guess, the game gives feedback about the correctness and position of each letter using color codes.
 This tool helps users find possible answers based on the feedback from their previous guesses.
 
 ## 🚀 Features
