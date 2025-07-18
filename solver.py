@@ -11,6 +11,14 @@ class DictionaryDownloader:
         os.makedirs(self.save_dir, exist_ok=True)
 
     def download(self):
+        """Download the dictionary from the given url and save it to
+        the given directory under the given filename.
+
+        Prints a message on success or failure.
+
+        :raises requests.RequestException: if there is an error downloading
+            the file.
+        """
         save_path = os.path.join(self.save_dir, self.filename)
         try:
             print(f"Downloading dictionary from {self.url} ...")
@@ -30,6 +38,20 @@ class WordFilter:
         self.pattern = re.compile(r"^[a-z]{5}$")
 
     def filter_and_save(self):
+        """
+        Filters a list of words from the input file, keeping only those that match
+        the specified pattern (5-letter lowercase words), and saves the filtered
+        list in sorted order to the output file. If the input file is not found,
+        prints a message and exits.
+
+        The function ensures that the words are unique and sorted alphabetically
+        before writing them to the output file.
+
+        Prints the number of words saved to the output file.
+
+        :raises FileNotFoundError: if the input file does not exist.
+        """
+
         if not os.path.exists(self.input_path):
             print(f"File {self.input_path} not found!")
             return
@@ -56,6 +78,23 @@ class WordleSolver:
         self.words = words
 
     def filter_candidates(self, known_pattern, unknowns, excluded_letters):
+        """
+        Filter the list of words based on the given clues.
+
+        Parameters:
+            known_pattern (list[str]): List of length 5, where each element is either
+                a lowercase letter or None. If a letter is given, it must be in the
+                corresponding position in the word.
+            unknowns (list[tuple[int, str]]): List of tuples, where the first element
+                is the index of the letter in the word and the second element is the
+                letter. The letter must appear in the word, but not in the given
+                position.
+            excluded_letters (list[str]): List of letters that should not appear in
+                the word.
+
+        Returns:
+            list[str]: The filtered list of words.
+        """
         pattern = "".join([ch if ch else "." for ch in known_pattern])
         print(f"Regex Pattern: {pattern}")
         regex = re.compile(pattern)

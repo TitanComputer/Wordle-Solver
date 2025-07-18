@@ -31,6 +31,13 @@ class WordleSolverApp(tb.Window):
 
     def apply_custom_styles(self):
         # Buttons
+        """Apply custom styles to ttk widgets.
+
+        This method sets the style of various ttk widgets such as buttons,
+        checkbuttons, and entries. The styles are set based on the current
+        theme of the application.
+
+        """
         self.style.configure("primary.TButton", font=("Arial", 16, "bold"))
         self.style.configure("info.TButton", font=("Arial", 16, "bold"))
         self.style.configure("warning.TButton", font=("Arial", 16, "bold"))
@@ -56,6 +63,17 @@ class WordleSolverApp(tb.Window):
         self.style.configure("Square.Toggle", font=("Arial", 12, "bold"))
 
     def toggle_theme(self):
+        """
+        Toggle between light and dark theme.
+
+        This function changes the theme of the application window, and
+        also updates the style of all the entries and buttons accordingly.
+
+        If the theme is changed to dark, it sets the background color of
+        all empty entries to match the dark theme.
+
+        :return: None
+        """
         self.is_dark_mode = not self.is_dark_mode
         new_theme = "darkly" if self.is_dark_mode else "litera"
         self.style.theme_use(new_theme)
@@ -110,6 +128,13 @@ class WordleSolverApp(tb.Window):
                 entry.configure(style="Default.TEntry")
 
     def center_window(self):
+        """
+        Centers the main application window on the screen.
+
+        This function calculates the appropriate x and y coordinates such that
+        the window is positioned at the center of the user's screen. It sets the
+        window's geometry using a fixed width and height.
+        """
         self.update_idletasks()
         width = 550
         height = 650
@@ -118,6 +143,25 @@ class WordleSolverApp(tb.Window):
         self.geometry(f"{width}x{height}+{x}+{y}")
 
     def center_main_and_result(self, result_width, result_height):
+        """
+        Centers the main application window and the result window on the screen.
+
+        This function takes into account the width and height of the result window
+        when positioning the main window. It places the main window at the left
+        side of the screen and the result window at the right side of the screen.
+
+        The main window is positioned so that its top-left corner is at the center
+        of the screen. The result window is positioned so that its top-left corner
+        is at the center of the screen, right of the main window.
+
+        If the combined width of the two windows is larger than the screen width,
+        the windows will be positioned at the left edge of the screen. If the
+        combined height of the windows is larger than the screen height, the
+        windows will be positioned at the top edge of the screen.
+
+        :param result_width: width of the result window in pixels
+        :param result_height: height of the result window in pixels
+        """
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
 
@@ -135,6 +179,16 @@ class WordleSolverApp(tb.Window):
         self.result_window.geometry(f"{result_width}x{result_height}+{x + main_width}+{y}")
 
     def reset_inputs(self):
+        """
+        Resets all input entries to empty strings and the default entry style.
+
+        This method is used when the user clicks the "Reset" button. It clears all
+        input entries and resets their style to the default style. If a result
+        window exists, it is closed and the main application window is centered
+        on the screen.
+
+        :return: None
+        """
         for entry in self.get_all_entries():
             entry.delete(0, END)
             entry.configure(style="Default.TEntry")
@@ -144,7 +198,16 @@ class WordleSolverApp(tb.Window):
             self.center_window()
 
     def setup_layout(self):
+        """
+        Sets up the main window layout.
 
+        This method configures the main window's rows and columns to have a
+        specific weight, and creates two frames inside the main window: one
+        for the left side and one for the right side. The left frame is used
+        for the main input and the right frame is used for the buttons.
+
+        :return: None
+        """
         self.columnconfigure(0, weight=3)
         self.columnconfigure(1, weight=1)
         self.rowconfigure(0, weight=1)
@@ -159,6 +222,17 @@ class WordleSolverApp(tb.Window):
         self.setup_right_frame()
 
     def setup_left_frame(self):
+        """
+        Sets up the left frame's layout.
+
+        This method creates the left frame's content, which includes the input
+        entries for the known positions, unknown positions, and excluded letters.
+        Each input is a row of 5 entries, which are created using
+        `create_entry_row` method.
+
+        :return: None
+        """
+
         self.left_frame.columnconfigure(0, weight=1)
         self.left_frame.rowconfigure(0, weight=1)
 
@@ -190,6 +264,13 @@ class WordleSolverApp(tb.Window):
             self.excluded_inputs.append(row_inputs)
 
     def setup_right_frame(self):
+        """
+        This method creates the right frame's content, which includes the buttons for
+        submitting the query, downloading the dictionary, toggling dark mode, and
+        resetting all inputs.
+
+        :return: None
+        """
         # Use grid manager for better layout control
         self.right_frame.columnconfigure(0, weight=1)
         self.right_frame.rowconfigure(3, weight=1)  # space above the reset button
@@ -230,6 +311,11 @@ class WordleSolverApp(tb.Window):
         self.reset_button.grid(row=4, column=0, sticky="ew,s", pady=5, ipady=5)
 
     def get_all_entries(self):
+        """
+        Returns a list of all the input entries in the application window.
+
+        :return: List of all input entries in the application window
+        """
         entries = []
         entries.extend(self.known_inputs)
         for row in self.unknown_inputs:
@@ -239,9 +325,25 @@ class WordleSolverApp(tb.Window):
         return entries
 
     def store_last_value(self, event):
+        """
+        Stores the value of the last focused input entry in the application
+        window. This is necessary for the reset button to clear the input
+        entries to their original value.
+
+        :param event: The event that triggered this function to be called
+        :return: None
+        """
         self.last_entry_value = event.widget.get()
 
     def create_entry_row(self, parent, num_entries, row=0):
+        """
+        Creates a row of input entries in the given parent widget.
+
+        :param parent: The parent widget to create the entries in
+        :param num_entries: The number of entries to create
+        :param row: The row number to place the entries in (default=0)
+        :return: A list of the created entries
+        """
         entries = []
         vcmd = (self.register(self.validate_input), "%P")
         for idx in range(num_entries):
@@ -265,7 +367,16 @@ class WordleSolverApp(tb.Window):
         return entries
 
     def validate_input(self, proposed_value):
+        """
+        Validates the input in an entry widget.
 
+        The input is considered valid if it is an empty string, a single
+        ASCII letter, or a single non-ASCII letter that can be converted to
+        uppercase.
+
+        :param proposed_value: The value to be validated
+        :return: True if the input is valid, False otherwise
+        """
         if not proposed_value:
             return True
 
@@ -281,6 +392,14 @@ class WordleSolverApp(tb.Window):
         return True
 
     def force_upper(self):
+        """
+        Converts the text in the currently focused entry to uppercase.
+
+        This method checks if the currently focused widget is an entry
+        field. If it is, it retrieves the current text, converts it to
+        uppercase, and updates the entry with the uppercase text.
+        """
+
         focused = self.focus_get()
         if focused and isinstance(focused, tb.Entry):
             value = focused.get()
@@ -288,6 +407,19 @@ class WordleSolverApp(tb.Window):
             focused.insert(0, value.upper())
 
     def handle_focus(self, event):
+        """
+        Handles key press events in the input entries.
+
+        This method handles the "Return", "Delete", "BackSpace", and any
+        alphanumeric key presses in the input entries. The method is
+        responsible for moving the focus to the next or previous entry based
+        on the key pressed, setting the style of the entry based on whether
+        it contains any text, and deleting any text in the entry if the
+        "Delete" key is pressed.
+
+        :param event: The key press event
+        :return: None
+        """
         widget = event.widget
         key = event.keysym
         char = event.char
@@ -347,6 +479,17 @@ class WordleSolverApp(tb.Window):
         widget.configure(style=new_style)
 
     def get_dictionary(self):
+        """Downloads the Wordle dictionary and filters it to 5-letter words if not already done.
+
+        This method checks if the Wordle dictionary already exists. If it does, it
+        asks the user if they want to re-download it. If yes, it downloads it and
+        filters it to 5-letter words. If no, it filters the existing dictionary
+        if it has not already been filtered. If the dictionary does not exist, it
+        downloads it and filters it to 5-letter words.
+
+        The method runs in a separate thread to not block the main thread.
+        """
+
         def worker():
             dict_path = "dict/words.txt"
             filtered_path = "dict/words_filtered.txt"
@@ -381,6 +524,17 @@ class WordleSolverApp(tb.Window):
         threading.Thread(target=worker, daemon=True).start()
 
     def submit_query(self):
+        """
+        Handles the "Submit Query" button click event.
+
+        This method filters the words in the dictionary based on the inputs
+        provided by the user and shows the results in a message box. It also
+        checks for any conflicts in the user's inputs and shows an error message
+        if there are any conflicts.
+
+        The method runs in a separate thread to not block the main thread.
+        """
+
         def worker():
             if self.words is None:
                 file_path = "dict/words_filtered.txt"
@@ -456,6 +610,14 @@ class WordleSolverApp(tb.Window):
         threading.Thread(target=worker, daemon=True).start()
 
     def show_results(self, candidates):
+        """
+        Show the given list of candidates in a separate window with a scrollable frame and
+        buttons for each word.
+
+        :param candidates: List of words to display
+        :return: None
+        """
+
         if hasattr(self, "result_window") and self.result_window is not None and self.result_window.winfo_exists():
             self.result_window.destroy()
 
@@ -516,12 +678,34 @@ class WordleSolverApp(tb.Window):
 
         # Mousewheel scrolling
         def _on_mousewheel(event):
+            """
+            Handles mouse wheel scrolling for Windows and Linux systems.
+
+            This function allows scrolling within a canvas widget using the mouse wheel.
+            It calculates the total content height and compares it with the visible
+            height of the canvas. If the content is larger than the visible area, it
+            scrolls the canvas vertically based on the scroll event delta.
+
+            :param event: The mouse wheel event containing the scroll delta.
+            """
+
             content_height = canvas.bbox("all")[3]
             visible_height = canvas.winfo_height()
             if content_height > visible_height:
                 canvas.yview_scroll(-1 * int(event.delta / 120), "units")
 
         def _on_mousewheel_mac(event):
+            """
+            Handles mouse wheel scrolling for macOS systems.
+
+            This function enables vertical scrolling within a canvas widget using the mouse wheel.
+            It calculates the content height and compares it with the visible height of the canvas.
+            If the content exceeds the visible area, it scrolls the canvas vertically based on the
+            scroll event delta, adjusting for macOS-specific event handling.
+
+            :param event: The mouse wheel event containing the scroll delta.
+            """
+
             content_height = canvas.bbox("all")[3]
             visible_height = canvas.winfo_height()
             if content_height > visible_height:
@@ -535,6 +719,15 @@ class WordleSolverApp(tb.Window):
 
         # Optional: Unbind on window close to avoid affecting main window
         def on_close():
+            """
+            Unbinds the mouse wheel event and closes the result window when it is closed.
+
+            This method is called when the result window is closed. It unbinds the
+            mouse wheel event to prevent it from affecting the main window and then
+            closes the result window. Finally, it centers the main window on the screen.
+
+            :return: None
+            """
             self.result_window.unbind_all("<MouseWheel>")
             self.result_window.destroy()
             self.center_window()
