@@ -115,28 +115,6 @@ class WordleSolver:
 
         return candidates
 
-    def rank_words_by_letter_frequency(self, letter_weights, top_n=20):
-        """
-        Rank words based on the sum of their unique letter frequencies.
-        Only counts each letter once per word.
-
-        Parameters:
-            letter_weights (dict): a dictionary mapping letters to weights
-            top_n (int): number of top words to return
-
-        Returns:
-            list[tuple[str, int]]: list of (word, score) sorted by score descending
-        """
-        word_scores = []
-
-        for word in self.words:
-            unique_letters = set(word)
-            score = sum(letter_weights.get(ch, 0) for ch in unique_letters)
-            word_scores.append((word, score))
-
-        word_scores.sort(key=lambda x: x[1], reverse=True)
-        return word_scores[:top_n]
-
 
 class LetterFrequencyAnalyzer:
     def __init__(self, input_path="dict/words_filtered.txt"):
