@@ -110,6 +110,7 @@ class WordleSolver:
         if excluded_letters:
             candidates = [w for w in candidates if all(ch not in w for ch in excluded_letters)]
             print(f"Excluded Letters: {excluded_letters}")
+            print(f"After Excluded Letters: {len(candidates)} words")
 
         return candidates
 
