@@ -115,6 +115,28 @@ class WordleSolver:
 
         return candidates
 
+    def rank_words_by_letter_frequency(self, letter_weights, top_n=20):
+        """
+        Rank words based on the sum of their unique letter frequencies.
+        Only counts each letter once per word.
+
+        Parameters:
+            letter_weights (dict): a dictionary mapping letters to weights
+            top_n (int): number of top words to return
+
+        Returns:
+            list[tuple[str, int]]: list of (word, score) sorted by score descending
+        """
+        word_scores = []
+
+        for word in self.words:
+            unique_letters = set(word)
+            score = sum(letter_weights.get(ch, 0) for ch in unique_letters)
+            word_scores.append((word, score))
+
+        word_scores.sort(key=lambda x: x[1], reverse=True)
+        return word_scores[:top_n]
+
 
 class LetterFrequencyAnalyzer:
     def __init__(self, input_path="dict/words_filtered.txt"):
@@ -125,9 +147,8 @@ class LetterFrequencyAnalyzer:
         """
         Analyzes the frequency of letters in the filtered word list.
         Each letter is only counted once per word (i.e., no double-counting within a word).
-        Prints the total frequency and the relative weight (percentage) of each letter.
+        Stores the result in self.frequencies.
         """
-
         if not os.path.exists(self.input_path):
             print(f"File {self.input_path} not found!")
             return
@@ -143,6 +164,37 @@ class LetterFrequencyAnalyzer:
         for letter, count in self.frequencies.most_common():
             weight = count / total * 100
             print(f"{letter}: {count} ({weight:.2f}%)")
+
+    def suggest_best_words(self, word_list=None, top_n=20):
+        """
+        Suggest top words based on letter frequency weights.
+
+        If word_list is not provided, words will be read from self.input_path.
+
+        Parameters:
+            word_list (list[str], optional): List of words to score. If None, reads from input file.
+            top_n (int): Number of top words to return.
+
+        Returns:
+            list[tuple[str, float]]: List of (word, score), sorted by score descending.
+        """
+        # If no word list provided, read from input file
+        if word_list is None:
+            if not os.path.exists(self.input_path):
+                print(f"File {self.input_path} not found!")
+                return []
+            with open(self.input_path, "r", encoding="utf-8") as f:
+                word_list = [line.strip() for line in f if line.strip()]
+
+        # Compute score of each word based on letter frequency
+        scored_words = []
+        for word in word_list:
+            unique_letters = set(word)
+            score = sum(self.frequencies.get(ch, 0) for ch in unique_letters)
+            scored_words.append((word, score))
+
+        scored_words.sort(key=lambda x: x[1], reverse=True)
+        return scored_words[:top_n]
 
 
 if __name__ == "__main__":
