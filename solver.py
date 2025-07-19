@@ -1,6 +1,7 @@
 import os
 import requests
 import re
+from collections import Counter
 
 
 class DictionaryDownloader:
@@ -115,6 +116,35 @@ class WordleSolver:
         return candidates
 
 
+class LetterFrequencyAnalyzer:
+    def __init__(self, input_path="dict/words_filtered.txt"):
+        self.input_path = input_path
+        self.frequencies = Counter()
+
+    def analyze(self):
+        """
+        Analyzes the frequency of letters in the filtered word list.
+        Each letter is only counted once per word (i.e., no double-counting within a word).
+        Prints the total frequency and the relative weight (percentage) of each letter.
+        """
+
+        if not os.path.exists(self.input_path):
+            print(f"File {self.input_path} not found!")
+            return
+
+        with open(self.input_path, "r", encoding="utf-8") as file:
+            for line in file:
+                word = line.strip()
+                unique_letters = set(word)
+                self.frequencies.update(unique_letters)
+
+        total = sum(self.frequencies.values())
+        print(f"\nLetter Frequencies (each letter counted once per word):")
+        for letter, count in self.frequencies.most_common():
+            weight = count / total * 100
+            print(f"{letter}: {count} ({weight:.2f}%)")
+
+
 if __name__ == "__main__":
     dict_url = "https://raw.githubusercontent.com/tabatkins/wordle-list/refs/heads/main/words"
 
@@ -122,3 +152,5 @@ if __name__ == "__main__":
     downloader.download()
     wf = WordFilter()
     wf.filter_and_save()
+    analyzer = LetterFrequencyAnalyzer()
+    analyzer.analyze()
