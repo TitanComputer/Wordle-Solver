@@ -596,16 +596,19 @@ class WordleSolverApp(tb.Window):
                 )
                 return
 
-            if len(candidates) > 240:
-                self.after(
-                    0,
-                    lambda: messagebox.showwarning(
-                        "Too Many Results", "Too many possible words found (>240).\nPlease refine your inputs."
-                    ),
+            if len(candidates) > 300:
+                messagebox.showwarning(
+                    "Too Many Results",
+                    f"{len(candidates)} words matched your criteria.\n"
+                    "Only the top 300 will be shown.\n\n"
+                    "For better results, please adjust your input constraints and try again.",
                 )
-                return
 
-            self.after(0, lambda: self.show_results(candidates))
+            analyzer = LetterFrequencyAnalyzer()
+            analyzer.analyze()
+            ranked_candidates = analyzer.suggest_best_words(word_list=candidates, top_n=300)
+
+            self.after(0, lambda: self.show_results([word for word, _ in ranked_candidates]))
 
         threading.Thread(target=worker, daemon=True).start()
 
