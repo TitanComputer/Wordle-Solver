@@ -26,6 +26,7 @@ class WordleSolverApp(tb.Window):
         self.last_entry_value = ""
         self.is_dark_mode = False
         self.words = None
+        self.analyzer = None
 
         self.setup_layout()
 
@@ -550,6 +551,10 @@ class WordleSolverApp(tb.Window):
                 with open(file_path, "r", encoding="utf-8") as f:
                     self.words = tuple(line.strip() for line in f if line.strip())
 
+            if self.analyzer is None:
+                self.analyzer = LetterFrequencyAnalyzer()
+                self.analyzer.analyze()
+
             if all(not entry.get().strip() for entry in self.get_all_entries()):
                 self.after(
                     0, lambda: messagebox.showinfo("No Input", "Please enter at least one letter before submitting.")
@@ -604,9 +609,7 @@ class WordleSolverApp(tb.Window):
                     "For better results, please adjust your input constraints and try again.",
                 )
 
-            analyzer = LetterFrequencyAnalyzer()
-            analyzer.analyze()
-            ranked_candidates = analyzer.suggest_best_words(word_list=candidates, top_n=300)
+            ranked_candidates = self.analyzer.suggest_best_words(word_list=candidates, top_n=300)
 
             self.after(0, lambda: self.show_results([word for word, _ in ranked_candidates]))
 
