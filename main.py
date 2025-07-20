@@ -630,6 +630,7 @@ class WordleSolverApp(tb.Window):
         self.result_window = tb.Toplevel(self)
         num_results = len(candidates)
         title = f"Possible Answers ({num_results} found)" if num_results != 1 else "Possible Answer (1 found)"
+
         self.result_window.title(title)
 
         self.result_window.geometry("450x650")
@@ -640,7 +641,12 @@ class WordleSolverApp(tb.Window):
         self.result_window.rowconfigure(0, weight=1)
 
         labelframe = tb.Labelframe(
-            self.result_window, text=f"   Possible Answers   " if num_results != 1 else "   Possible Answer   "
+            self.result_window,
+            text=(
+                f"   Top {num_results} Answers (Ranked By Letter Frequency)   "
+                if num_results != 1
+                else "   Best Possible Answer   "
+            ),
         )
         labelframe.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
         labelframe.columnconfigure(0, weight=1)
