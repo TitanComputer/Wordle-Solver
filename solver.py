@@ -184,3 +184,12 @@ if __name__ == "__main__":
     wf.filter_and_save()
     analyzer = LetterFrequencyAnalyzer()
     analyzer.analyze()
+
+    # top_words = analyzer.suggest_best_words()
+    # for word, score in top_words:
+    #     print(f"{word}: {score:.2f}")
+
+    # custom_words = ["crane", "slate", "ghost"]
+    # top_custom = analyzer.suggest_best_words(word_list=custom_words, top_n=3)
+    # for word, score in top_custom:
+    #     print(f"{word}: {score:.2f}")
