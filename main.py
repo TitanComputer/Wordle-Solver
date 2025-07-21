@@ -255,8 +255,8 @@ class WordleSolverApp(tb.Window):
                 labelanchor="n",
             )
 
-            left_frame.grid(row=0, column=0, padx=10, pady=5, sticky="n")
-            right_frame.grid(row=0, column=1, padx=10, pady=5, sticky="n")
+            left_frame.grid(row=0, column=0, padx=10, pady=5, ipady=5, sticky="n")
+            right_frame.grid(row=0, column=1, padx=10, pady=5, ipady=5, sticky="n")
 
             # Make sure columns in each frame expand
             left_frame.grid_columnconfigure(0, weight=1)
@@ -276,6 +276,7 @@ class WordleSolverApp(tb.Window):
                         font=("Segoe UI", 10, "bold"),
                         anchor="center",
                         justify="center",
+                        bootstyle="info-inverse",
                     ).grid(row=i, column=0, sticky="ew", padx=10, pady=2)
 
                 if i < len(best_words):
@@ -287,6 +288,7 @@ class WordleSolverApp(tb.Window):
                         font=("Segoe UI", 10, "bold"),
                         anchor="center",
                         justify="center",
+                        bootstyle="success-inverse",
                     ).grid(row=i, column=0, sticky="ew", padx=10, pady=2)
 
         threading.Thread(target=worker, daemon=True).start()
