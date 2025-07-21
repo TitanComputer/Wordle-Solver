@@ -207,7 +207,7 @@ class WordleSolverApp(tb.Window):
         def show_results(letter_freqs, best_words):
             top = tb.Toplevel(self)
             top.title("Letter Frequency & Best Words To Start")
-            top.geometry("400x650")
+            top.geometry("400x700")
             top.resizable(False, False)
 
             # Center the window
@@ -227,15 +227,13 @@ class WordleSolverApp(tb.Window):
             top.grid_rowconfigure(0, weight=1)
             top.grid_columnconfigure(0, weight=1)
 
-            # Title labels
-            tb.Label(container, text="Letter Frequency (Percent)", font=("Segoe UI", 10, "bold")).grid(
-                row=0, column=0, padx=10, pady=(0, 5), sticky=W
-            )
-            tb.Label(container, text="Best Words To Start (Score)", font=("Segoe UI", 10, "bold")).grid(
-                row=0, column=1, padx=10, pady=(0, 5), sticky=W
-            )
+            # Create label frames
+            left_frame = tb.Labelframe(container, text="   Letter Frequency (%)   ", bootstyle="info")
+            right_frame = tb.Labelframe(container, text="   Best Words To Start (Score)   ", bootstyle="success")
 
-            # Tables
+            left_frame.grid(row=0, column=0, padx=10, pady=5, sticky=N)
+            right_frame.grid(row=0, column=1, padx=10, pady=5, sticky=N)
+
             total_freq = sum(freq for _, freq in letter_freqs)
             max_rows = max(len(letter_freqs), len(best_words))
 
@@ -244,14 +242,15 @@ class WordleSolverApp(tb.Window):
                     letter, freq = letter_freqs[i]
                     percent = freq / total_freq * 100
                     text = f"{letter.upper()}   ({percent:.1f}%)"
-                    tb.Label(container, text=text, bootstyle="info").grid(
-                        row=i + 1, column=0, sticky=W, padx=10, pady=2
+                    tb.Label(left_frame, text=text, font=("Segoe UI", 10, "bold")).grid(
+                        row=i, column=0, sticky=W, padx=10, pady=2
                     )
 
                 if i < len(best_words):
                     word, score = best_words[i]
-                    tb.Label(container, text=f"{word}  ({score:.2f})", bootstyle="success").grid(
-                        row=i + 1, column=1, sticky=W, padx=10, pady=2
+                    text = f"{word.upper()}   ({score})"
+                    tb.Label(right_frame, text=text, font=("Segoe UI", 10, "bold")).grid(
+                        row=i, column=0, sticky=W, padx=10, pady=2
                     )
 
         threading.Thread(target=worker, daemon=True).start()
