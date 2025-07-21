@@ -218,7 +218,7 @@ class WordleSolverApp(tb.Window):
             top.withdraw()
             top.iconphoto(False, self.icon)
             top.update_idletasks()
-            width = 550
+            width = 450
             height = 700
             x = (top.winfo_screenwidth() // 2) - (width // 2)
             y = (top.winfo_screenheight() // 2) - (height // 2)
@@ -229,17 +229,38 @@ class WordleSolverApp(tb.Window):
             top.grab_set()
             top.transient(self)
 
-            container = tb.Frame(top, padding=20)
-            container.grid(row=0, column=0, sticky=NSEW)
+            # Configure grid for top-level to center container vertically
             top.grid_rowconfigure(0, weight=1)
+            top.grid_rowconfigure(2, weight=1)
             top.grid_columnconfigure(0, weight=1)
 
-            # Create label frames
-            left_frame = tb.Labelframe(container, text="   Letter Frequency (%)   ", bootstyle="info")
-            right_frame = tb.Labelframe(container, text="   Best Words To Start (Score)   ", bootstyle="success")
+            container = tb.Frame(top)
+            container.grid(row=1, column=0)  # center row
 
-            left_frame.grid(row=0, column=0, padx=10, pady=5, sticky=N)
-            right_frame.grid(row=0, column=1, padx=10, pady=5, sticky=N)
+            # Center the container horizontally
+            container.grid_columnconfigure(0, weight=1)
+            container.grid_columnconfigure(1, weight=1)
+
+            # Create label frames
+            left_frame = tb.Labelframe(
+                container,
+                text="   Letter Frequency (%)   ",
+                bootstyle="info",
+                labelanchor="n",
+            )
+            right_frame = tb.Labelframe(
+                container,
+                text="   Best Words To Start (Score)   ",
+                bootstyle="success",
+                labelanchor="n",
+            )
+
+            left_frame.grid(row=0, column=0, padx=10, pady=5, sticky="n")
+            right_frame.grid(row=0, column=1, padx=10, pady=5, sticky="n")
+
+            # Make sure columns in each frame expand
+            left_frame.grid_columnconfigure(0, weight=1)
+            right_frame.grid_columnconfigure(0, weight=1)
 
             total_freq = sum(freq for _, freq in letter_freqs)
             max_rows = max(len(letter_freqs), len(best_words))
@@ -249,16 +270,24 @@ class WordleSolverApp(tb.Window):
                     letter, freq = letter_freqs[i]
                     percent = freq / total_freq * 100
                     text = f"{letter.upper()}   ({percent:.1f}%)"
-                    tb.Label(left_frame, text=text, font=("Segoe UI", 10, "bold")).grid(
-                        row=i, column=0, sticky=W, padx=10, pady=2
-                    )
+                    tb.Label(
+                        left_frame,
+                        text=text,
+                        font=("Segoe UI", 10, "bold"),
+                        anchor="center",
+                        justify="center",
+                    ).grid(row=i, column=0, sticky="ew", padx=10, pady=2)
 
                 if i < len(best_words):
                     word, score = best_words[i]
                     text = f"{word.upper()}   ({score})"
-                    tb.Label(right_frame, text=text, font=("Segoe UI", 10, "bold")).grid(
-                        row=i, column=0, sticky=W, padx=10, pady=2
-                    )
+                    tb.Label(
+                        right_frame,
+                        text=text,
+                        font=("Segoe UI", 10, "bold"),
+                        anchor="center",
+                        justify="center",
+                    ).grid(row=i, column=0, sticky="ew", padx=10, pady=2)
 
         threading.Thread(target=worker, daemon=True).start()
 
