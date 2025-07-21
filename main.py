@@ -3,6 +3,7 @@ import ttkbootstrap as tb
 from ttkbootstrap.constants import *
 from tkinter import StringVar
 from tkinter import messagebox
+from tkinter import PhotoImage
 import threading
 
 
@@ -10,6 +11,7 @@ class WordleSolverApp(tb.Window):
     def __init__(self):
         self.current_theme = "litera"  # light theme by default
         super().__init__(themename=self.current_theme)
+        self.icon = PhotoImage(file="icon.png")
 
         self.style.configure("Default.TEntry", fieldbackground="white", foreground="#000000")
         self.style.configure("Known.TEntry", fieldbackground="#6aaa64", foreground="#ffffff")
@@ -20,6 +22,7 @@ class WordleSolverApp(tb.Window):
 
         self.title("Wordle Solver")
         self.withdraw()
+        self.iconphoto(False, self.icon)
         self.minsize(550, 650)
         self.resizable(False, False)
         self.center_window()
@@ -214,6 +217,7 @@ class WordleSolverApp(tb.Window):
 
             # Center the window
             top.withdraw()
+            top.iconphoto(False, self.icon)
             top.update_idletasks()
             x = self.winfo_rootx() + (self.winfo_width() // 2) - (top.winfo_width() // 2)
             y = self.winfo_rooty() + (self.winfo_height() // 2) - (top.winfo_height() // 2)
@@ -720,6 +724,8 @@ class WordleSolverApp(tb.Window):
         self.result_window.title(title)
 
         self.result_window.geometry("450x650")
+        self.result_window.withdraw()
+        self.result_window.iconphoto(False, self.icon)
         self.result_window.resizable(False, False)
         self.result_window.focus_set()
 
@@ -773,6 +779,7 @@ class WordleSolverApp(tb.Window):
             scrollable_frame.columnconfigure(c, weight=0)
 
         self.center_main_and_result(450, 650)
+        self.result_window.deiconify()
 
         # Mousewheel scrolling
         def _on_mousewheel(event):
