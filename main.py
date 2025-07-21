@@ -15,6 +15,7 @@ class WordleSolverApp(tb.Window):
         self.style.configure("Known.TEntry", fieldbackground="#6aaa64", foreground="#ffffff")
         self.style.configure("Unknown.TEntry", fieldbackground="#c9b458", foreground="#ffffff")
         self.style.configure("Excluded.TEntry", fieldbackground="#787c7e", foreground="#ffffff")
+
         self.apply_custom_styles()
 
         self.title("Wordle Solver")
@@ -43,6 +44,7 @@ class WordleSolverApp(tb.Window):
         self.style.configure("info.TButton", font=("Arial", 16, "bold"))
         self.style.configure("warning.TButton", font=("Arial", 16, "bold"))
         self.style.configure("danger.TButton", font=("Arial", 11, "bold"))
+        self.style.configure("TLabelframe.Label", font=("Segoe UI", 10, "bold"))
         self.style.configure(
             "OutlinePrimaryBold.TButton",
             font=("Arial", 14, "bold"),
@@ -207,7 +209,7 @@ class WordleSolverApp(tb.Window):
         def show_results(letter_freqs, best_words):
             top = tb.Toplevel(self)
             top.title("Letter Frequency & Best Words To Start")
-            top.geometry("400x700")
+            top.geometry("500x700")
             top.resizable(False, False)
 
             # Center the window
