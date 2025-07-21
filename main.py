@@ -42,6 +42,7 @@ class WordleSolverApp(tb.Window):
         self.style.configure("primary.TButton", font=("Arial", 16, "bold"))
         self.style.configure("info.TButton", font=("Arial", 16, "bold"))
         self.style.configure("warning.TButton", font=("Arial", 16, "bold"))
+        self.style.configure("danger.TButton", font=("Arial", 11, "bold"))
         self.style.configure(
             "OutlinePrimaryBold.TButton",
             font=("Arial", 14, "bold"),
@@ -179,6 +180,28 @@ class WordleSolverApp(tb.Window):
         self.geometry(f"{main_width}x{main_height}+{x}+{y}")
         self.result_window.geometry(f"{result_width}x{result_height}+{x + main_width}+{y}")
 
+    def best_words(self):
+        def worker():
+            if self.words is None:
+                file_path = "dict/words_filtered.txt"
+                if not os.path.exists(file_path):
+                    self.after(
+                        0,
+                        lambda: messagebox.showerror(
+                            "File Not Found", "words_filtered.txt not found!\nPlease click 'Get Dictionary' first."
+                        ),
+                    )
+                    return
+
+                with open(file_path, "r", encoding="utf-8") as f:
+                    self.words = tuple(line.strip() for line in f if line.strip())
+
+            if self.analyzer is None:
+                self.analyzer = LetterFrequencyAnalyzer()
+                self.analyzer.analyze()
+
+        threading.Thread(target=worker, daemon=True).start()
+
     def reset_inputs(self):
         """
         Resets all input entries to empty strings and the default entry style.
@@ -303,13 +326,21 @@ class WordleSolverApp(tb.Window):
         )
         self.dark_toggle.grid(row=2, column=0, sticky="ew", pady=10)
 
+        self.bestwords_button = tb.Button(
+            self.right_frame,
+            text="Best Words To Start",
+            bootstyle=DANGER,
+            command=self.best_words,
+        )
+        self.bestwords_button.grid(row=4, column=0, sticky="ew,s", pady=5, ipady=5)
+
         self.reset_button = tb.Button(
             self.right_frame,
             text="Reset All",
             bootstyle=WARNING,
             command=self.reset_inputs,
         )
-        self.reset_button.grid(row=4, column=0, sticky="ew,s", pady=5, ipady=5)
+        self.reset_button.grid(row=5, column=0, sticky="ew,s", pady=5, ipady=5)
 
     def get_all_entries(self):
         """
