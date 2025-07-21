@@ -212,16 +212,17 @@ class WordleSolverApp(tb.Window):
         def show_results(letter_freqs, best_words):
             top = tb.Toplevel(self)
             top.title("Letter Frequency & Best Words To Start")
-            top.geometry("500x700")
             top.resizable(False, False)
 
             # Center the window
             top.withdraw()
             top.iconphoto(False, self.icon)
             top.update_idletasks()
-            x = self.winfo_rootx() + (self.winfo_width() // 2) - (top.winfo_width() // 2)
-            y = self.winfo_rooty() + (self.winfo_height() // 2) - (top.winfo_height() // 2)
-            top.geometry(f"+{x}+{y}")
+            width = 550
+            height = 700
+            x = (top.winfo_screenwidth() // 2) - (width // 2)
+            y = (top.winfo_screenheight() // 2) - (height // 2)
+            top.geometry(f"{width}x{height}+{x}+{y}")
             top.deiconify()
 
             # Modal behavior
