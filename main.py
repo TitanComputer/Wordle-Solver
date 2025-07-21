@@ -192,13 +192,67 @@ class WordleSolverApp(tb.Window):
                         ),
                     )
                     return
-
                 with open(file_path, "r", encoding="utf-8") as f:
                     self.words = tuple(line.strip() for line in f if line.strip())
 
             if self.analyzer is None:
                 self.analyzer = LetterFrequencyAnalyzer()
                 self.analyzer.analyze()
+
+            letter_freqs = self.analyzer.frequencies.most_common()
+            best_words = self.analyzer.suggest_best_words(self.words, top_n=26)
+
+            self.after(0, lambda: show_results(letter_freqs, best_words))
+
+        def show_results(letter_freqs, best_words):
+            top = tb.Toplevel(self)
+            top.title("Letter Frequency & Best Words To Start")
+            top.geometry("400x650")
+            top.resizable(False, False)
+
+            # Center the window
+            top.withdraw()
+            top.update_idletasks()
+            x = self.winfo_rootx() + (self.winfo_width() // 2) - (top.winfo_width() // 2)
+            y = self.winfo_rooty() + (self.winfo_height() // 2) - (top.winfo_height() // 2)
+            top.geometry(f"+{x}+{y}")
+            top.deiconify()
+
+            # Modal behavior
+            top.grab_set()
+            top.transient(self)
+
+            container = tb.Frame(top, padding=20)
+            container.grid(row=0, column=0, sticky=NSEW)
+            top.grid_rowconfigure(0, weight=1)
+            top.grid_columnconfigure(0, weight=1)
+
+            # Title labels
+            tb.Label(container, text="Letter Frequency (Percent)", font=("Segoe UI", 10, "bold")).grid(
+                row=0, column=0, padx=10, pady=(0, 5), sticky=W
+            )
+            tb.Label(container, text="Best Words To Start (Score)", font=("Segoe UI", 10, "bold")).grid(
+                row=0, column=1, padx=10, pady=(0, 5), sticky=W
+            )
+
+            # Tables
+            total_freq = sum(freq for _, freq in letter_freqs)
+            max_rows = max(len(letter_freqs), len(best_words))
+
+            for i in range(max_rows):
+                if i < len(letter_freqs):
+                    letter, freq = letter_freqs[i]
+                    percent = freq / total_freq * 100
+                    text = f"{letter.upper()}   ({percent:.1f}%)"
+                    tb.Label(container, text=text, bootstyle="info").grid(
+                        row=i + 1, column=0, sticky=W, padx=10, pady=2
+                    )
+
+                if i < len(best_words):
+                    word, score = best_words[i]
+                    tb.Label(container, text=f"{word}  ({score:.2f})", bootstyle="success").grid(
+                        row=i + 1, column=1, sticky=W, padx=10, pady=2
+                    )
 
         threading.Thread(target=worker, daemon=True).start()
 
