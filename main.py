@@ -222,7 +222,7 @@ class WordleSolverApp(tb.Window):
             top.iconphoto(False, self.icon)
             top.update_idletasks()
             width = 450
-            height = 700
+            height = 800
             x = (top.winfo_screenwidth() // 2) - (width // 2)
             y = (top.winfo_screenheight() // 2) - (height // 2)
             top.geometry(f"{width}x{height}+{x}+{y}")
@@ -276,7 +276,7 @@ class WordleSolverApp(tb.Window):
                     tb.Label(
                         left_frame,
                         text=text,
-                        font=("Segoe UI", 10, "bold"),
+                        font=("Segoe UI", 12, "bold"),
                         anchor="center",
                         justify="center",
                         bootstyle="info-inverse",
@@ -288,7 +288,7 @@ class WordleSolverApp(tb.Window):
                     tb.Label(
                         right_frame,
                         text=text,
-                        font=("Segoe UI", 10, "bold"),
+                        font=("Segoe UI", 12, "bold"),
                         anchor="center",
                         justify="center",
                         style="Success-Inverse.TLabel",
