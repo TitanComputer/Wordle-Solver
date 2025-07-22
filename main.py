@@ -17,6 +17,7 @@ class WordleSolverApp(tb.Window):
         self.style.configure("Known.TEntry", fieldbackground="#6aaa64", foreground="#ffffff")
         self.style.configure("Unknown.TEntry", fieldbackground="#c9b458", foreground="#ffffff")
         self.style.configure("Excluded.TEntry", fieldbackground="#787c7e", foreground="#ffffff")
+        self.style.configure("Success-Inverse.TLabel", background="#18813b", foreground="#ffffff")
 
         self.apply_custom_styles()
 
@@ -128,6 +129,8 @@ class WordleSolverApp(tb.Window):
                 background=[("active", "white"), ("pressed", "white")],
                 bordercolor=[("active", "#0a58ca"), ("pressed", "#084298")],
             )
+
+        self.style.configure("Success-Inverse.TLabel", background="#18813b", foreground="#ffffff")
 
         # Update all empty entries to Default style so background matches theme
         for entry in self.get_all_entries():
@@ -288,7 +291,7 @@ class WordleSolverApp(tb.Window):
                         font=("Segoe UI", 10, "bold"),
                         anchor="center",
                         justify="center",
-                        bootstyle="success-inverse",
+                        style="Success-Inverse.TLabel",
                     ).grid(row=i, column=0, sticky="ew", padx=10, pady=2)
 
         threading.Thread(target=worker, daemon=True).start()
