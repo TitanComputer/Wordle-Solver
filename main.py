@@ -189,6 +189,26 @@ class WordleSolverApp(tb.Window):
         self.result_window.geometry(f"{result_width}x{result_height}+{x + main_width}+{y}")
 
     def best_words(self):
+        """
+        Calculate and display the best starting words based on letter frequency.
+
+        This function reads a list of filtered words from a file, analyzes the
+        frequency of each letter, and suggests the top words to start with in a
+        Wordle game. It displays the letter frequencies and the best starting words
+        in a new window.
+
+        The function operates in a separate thread to avoid blocking the main
+        application.
+
+        If the word list is not already loaded, it reads it from 'words_filtered.txt'.
+        If the letter frequency analyzer is not initialized, it creates and analyzes
+        it.
+
+        The results are shown in a top-level window with two sections: one for
+        letter frequencies and one for the best starting words based on frequency
+        scores.
+        """
+
         def worker():
             if self.words is None:
                 file_path = "dict/words_filtered.txt"
