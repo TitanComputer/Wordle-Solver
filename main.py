@@ -5,6 +5,7 @@ from tkinter import StringVar
 from tkinter import messagebox
 from tkinter import PhotoImage
 import threading
+from idlelib.tooltip import Hovertip
 
 
 class WordleSolverApp(tb.Window):
@@ -756,16 +757,16 @@ class WordleSolverApp(tb.Window):
 
             ranked_candidates = self.analyzer.suggest_best_words(word_list=candidates, top_n=300)
 
-            self.after(0, lambda: self.show_results([word for word, _ in ranked_candidates]))
+            self.after(0, lambda: self.show_results(ranked_candidates))
 
         threading.Thread(target=worker, daemon=True).start()
 
-    def show_results(self, candidates):
+    def show_results(self, candidates: list[tuple[str, float]]):
         """
-        Show the given list of candidates in a separate window with a scrollable frame and
-        buttons for each word.
+        Show the given list of ranked candidates in a separate window with a scrollable frame and
+        buttons for each word, each showing a tooltip with its score.
 
-        :param candidates: List of words to display
+        :param candidates: List of (word, score) tuples
         :return: None
         """
 
@@ -775,7 +776,6 @@ class WordleSolverApp(tb.Window):
         self.result_window = tb.Toplevel(self)
         num_results = len(candidates)
         title = f"Possible Answers ({num_results} found)" if num_results != 1 else "Possible Answer (1 found)"
-
         self.result_window.title(title)
 
         self.result_window.geometry("450x650")
@@ -819,7 +819,7 @@ class WordleSolverApp(tb.Window):
         canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
 
         max_cols = 3
-        for idx, word in enumerate(candidates):
+        for idx, (word, score) in enumerate(candidates):
             r, c = divmod(idx, max_cols)
             btn = tb.Button(
                 scrollable_frame,
@@ -829,9 +829,10 @@ class WordleSolverApp(tb.Window):
                 cursor="arrow",
                 takefocus=False,
             )
-
             btn.grid(row=r, column=c, padx=8, pady=8)
             scrollable_frame.columnconfigure(c, weight=0)
+
+            Hovertip(btn, f"Score: {score}", hover_delay=400)
 
         self.center_main_and_result(450, 650)
         self.result_window.deiconify()
