@@ -67,6 +67,40 @@ class WordleSolverApp(tb.Window):
             background=[("active", "white"), ("pressed", "white")],
             bordercolor=[("active", "#0a58ca"), ("pressed", "#084298")],
         )
+        self.style.configure(
+            "OutlineSuccess.TButton",
+            font=("Arial", 14, "bold"),
+            foreground="#198754",
+            background="white",
+            borderwidth=2,
+            relief="solid",
+            padding=(10, 5),
+            anchor="center",
+            justify="center",
+        )
+        self.style.map(
+            "OutlineSuccess.TButton",
+            foreground=[("active", "#146c43"), ("pressed", "#0f5132")],
+            background=[("active", "white"), ("pressed", "white")],
+            bordercolor=[("active", "#146c43"), ("pressed", "#0f5132")],
+        )
+        self.style.configure(
+            "OutlineMidSuccess.TButton",
+            font=("Arial", 14, "bold"),
+            foreground="#6fcf97",
+            background="white",
+            borderwidth=2,
+            relief="solid",
+            padding=(10, 5),
+            anchor="center",
+            justify="center",
+        )
+        self.style.map(
+            "OutlineMidSuccess.TButton",
+            foreground=[("active", "#81dab0"), ("pressed", "#5bbf85")],
+            background=[("active", "white"), ("pressed", "white")],
+            bordercolor=[("active", "#81dab0"), ("pressed", "#5bbf85")],
+        )
 
         # Checkbutton
         self.style.configure("Square.Toggle", font=("Arial", 12, "bold"))
@@ -109,6 +143,36 @@ class WordleSolverApp(tb.Window):
                 background=[("active", "#212529"), ("pressed", "#212529")],
                 bordercolor=[("active", "#99ccff"), ("pressed", "#cce6ff")],
             )
+            self.style.configure(
+                "OutlineSuccess.TButton",
+                font=("Arial", 14, "bold"),
+                foreground="#198754",
+                background="#212529",
+                borderwidth=2,
+                relief="solid",
+                padding=(10, 5),
+            )
+            self.style.map(
+                "OutlineSuccess.TButton",
+                foreground=[("active", "#27ae60"), ("pressed", "#1e8449")],
+                background=[("active", "#212529"), ("pressed", "#212529")],
+                bordercolor=[("active", "#27ae60"), ("pressed", "#1e8449")],
+            )
+            self.style.configure(
+                "OutlineMidSuccess.TButton",
+                font=("Arial", 14, "bold"),
+                foreground="#6fcf97",  # soft green
+                background="#212529",
+                borderwidth=2,
+                relief="solid",
+                padding=(10, 5),
+            )
+            self.style.map(
+                "OutlineMidSuccess.TButton",
+                foreground=[("active", "#81dab0"), ("pressed", "#5bbf85")],
+                background=[("active", "#212529"), ("pressed", "#212529")],
+                bordercolor=[("active", "#81dab0"), ("pressed", "#5bbf85")],
+            )
 
         else:
             self.style.configure("Default.TEntry", fieldbackground="white", foreground="#000000")
@@ -129,6 +193,36 @@ class WordleSolverApp(tb.Window):
                 foreground=[("active", "#0a58ca"), ("pressed", "#084298")],
                 background=[("active", "white"), ("pressed", "white")],
                 bordercolor=[("active", "#0a58ca"), ("pressed", "#084298")],
+            )
+            self.style.configure(
+                "OutlineSuccess.TButton",
+                font=("Arial", 14, "bold"),
+                foreground="#198754",
+                background="white",
+                borderwidth=2,
+                relief="solid",
+                padding=(10, 5),
+            )
+            self.style.map(
+                "OutlineSuccess.TButton",
+                foreground=[("active", "#146c43"), ("pressed", "#0f5132")],
+                background=[("active", "white"), ("pressed", "white")],
+                bordercolor=[("active", "#146c43"), ("pressed", "#0f5132")],
+            )
+            self.style.configure(
+                "OutlineMidSuccess.TButton",
+                font=("Arial", 14, "bold"),
+                foreground="#6fcf97",
+                background="white",
+                borderwidth=2,
+                relief="solid",
+                padding=(10, 5),
+            )
+            self.style.map(
+                "OutlineMidSuccess.TButton",
+                foreground=[("active", "#81dab0"), ("pressed", "#5bbf85")],
+                background=[("active", "white"), ("pressed", "white")],
+                bordercolor=[("active", "#81dab0"), ("pressed", "#5bbf85")],
             )
 
         self.style.configure("Success-Inverse.TLabel", background="#18813b", foreground="#ffffff")
@@ -761,23 +855,15 @@ class WordleSolverApp(tb.Window):
 
         threading.Thread(target=worker, daemon=True).start()
 
-    def show_results(self, candidates: list[tuple[str, float]]):
-        """
-        Show the given list of ranked candidates in a separate window with a scrollable frame and
-        buttons for each word, each showing a tooltip with its score.
-
-        :param candidates: List of (word, score) tuples
-        :return: None
-        """
-
+    def show_results(self, candidates):
         if hasattr(self, "result_window") and self.result_window is not None and self.result_window.winfo_exists():
             self.result_window.destroy()
 
         self.result_window = tb.Toplevel(self)
         num_results = len(candidates)
         title = f"Possible Answers ({num_results} found)" if num_results != 1 else "Possible Answer (1 found)"
-        self.result_window.title(title)
 
+        self.result_window.title(title)
         self.result_window.geometry("450x650")
         self.result_window.withdraw()
         self.result_window.iconphoto(False, self.icon)
@@ -815,17 +901,27 @@ class WordleSolverApp(tb.Window):
 
         scrollable_frame = tb.Frame(canvas)
         scrollable_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
-
         canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+
+        # Identify highest score and how many words share it
+        if candidates:
+            max_score = candidates[0][1]
+            top_words = [word for word, score in candidates if score == max_score]
+            top_style = "OutlineSuccess.TButton" if len(top_words) == 1 else "OutlineMidSuccess.TButton"
+        else:
+            top_words = []
+            top_style = "OutlinePrimaryBold.TButton"
 
         max_cols = 3
         for idx, (word, score) in enumerate(candidates):
             r, c = divmod(idx, max_cols)
+            style = top_style if score == max_score else "OutlinePrimaryBold.TButton"
+
             btn = tb.Button(
                 scrollable_frame,
                 text=word.upper(),
                 width=9,
-                style="OutlinePrimaryBold.TButton",
+                style=style,
                 cursor="arrow",
                 takefocus=False,
             )
