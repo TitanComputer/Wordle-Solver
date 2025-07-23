@@ -209,6 +209,4 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
-icon.ico
 *.exe
-icon.png
