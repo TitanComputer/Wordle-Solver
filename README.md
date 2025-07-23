@@ -112,7 +112,7 @@ wordle_solver/
 ├── icon.png                    # Project icon
 └── requirements.txt            # Python dependencies
 ```
-## Icon Credit
+## 🎨 Icon Credit
 
 The application icon used in this project is sourced from [Flaticon](https://www.flaticon.com/free-icons/puzzle).
 
