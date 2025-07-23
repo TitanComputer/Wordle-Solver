@@ -109,8 +109,14 @@ wordle_solver/
 │   ├── words.txt               # Dictionary of english words
 │   └── words_filtered.txt      # Dictionary of valid 5-letter words
 ├── README.md                   # Project documentation
+├── icon.png                   # Project icon
 └── requirements.txt            # Python dependencies
 ```
+## Icon Credit
+
+The application icon used in this project is sourced from [Flaticon](https://www.flaticon.com/free-icons/puzzle).
+
+**Puzzle icon** created by [monkik](https://www.flaticon.com/authors/monkik) – [Flaticon](https://www.flaticon.com/)
 
 ## 🛠 Compiled with Nuitka
 The executable was built using [`Nuitka`](https://nuitka.net/) for better performance and compactness.
