@@ -120,6 +120,24 @@ The application icon used in this project is sourced from [Flaticon](https://www
 
 ## 🛠 Compiled with Nuitka
 The executable was built using [`Nuitka`](https://nuitka.net/) for better performance and compactness.
+You can build the standalone executable using the following command:
+
+```bash
+.\venv\Scripts\python.exe -m nuitka ^
+  --jobs=4 ^
+  --enable-plugin=upx ^
+  --upx-binary="D:\upx\upx.exe" ^
+  --enable-plugin=multiprocessing ^
+  --enable-plugin=tk-inter ^
+  --windows-console-mode=disable ^
+  --lto=yes ^
+  --follow-imports ^
+  --windows-icon-from-ico="icon.ico" ^
+  --onefile ^
+  --standalone ^
+  --msvc=latest ^
+  main.py
+```
 
 ## 🤝 Contributing
 Pull requests are welcome.
