@@ -109,7 +109,7 @@ wordle_solver/
 │   ├── words.txt               # Dictionary of english words
 │   └── words_filtered.txt      # Dictionary of valid 5-letter words
 ├── README.md                   # Project documentation
-├── icon.png                   # Project icon
+├── icon.png                    # Project icon
 └── requirements.txt            # Python dependencies
 ```
 ## Icon Credit
