@@ -54,7 +54,10 @@ class WordleSolverApp(tb.Window):
         self.style.configure("success.TButton", font=("Arial", 16, "bold"))
         self.style.configure("danger.TButton", font=("Arial", 11, "bold"))
         self.style.configure("secondary.TButton", font=("Arial", 16, "bold"))
+        self.style.configure("dark.TButton", font=("Arial", 16, "bold"))
+        self.style.configure("light.TButton", font=("Arial", 16, "bold"))
         self.style.configure("TLabelframe.Label", font=("Segoe UI", 10, "bold"))
+        self.donate_style = DARK
         self.style.configure(
             "OutlinePrimaryBold.TButton",
             font=("Arial", 14, "bold"),
@@ -133,6 +136,7 @@ class WordleSolverApp(tb.Window):
             self.style.configure("Known.TEntry", fieldbackground="#538d4e", foreground="#ffffff")
             self.style.configure("Unknown.TEntry", fieldbackground="#b59f3b", foreground="#ffffff")
             self.style.configure("Excluded.TEntry", fieldbackground="#3a3a3c", foreground="#ffffff")
+            self.donate_style = LIGHT
             self.style.configure(
                 "OutlinePrimaryBold.TButton",
                 font=("Arial", 14, "bold"),
@@ -184,6 +188,7 @@ class WordleSolverApp(tb.Window):
             self.style.configure("Known.TEntry", fieldbackground="#6aaa64", foreground="#ffffff")
             self.style.configure("Unknown.TEntry", fieldbackground="#c9b458", foreground="#ffffff")
             self.style.configure("Excluded.TEntry", fieldbackground="#787c7e", foreground="#ffffff")
+            self.donate_style = DARK
             self.style.configure(
                 "OutlinePrimaryBold.TButton",
                 font=("Arial", 14, "bold"),
@@ -230,6 +235,7 @@ class WordleSolverApp(tb.Window):
                 bordercolor=[("active", "#81dab0"), ("pressed", "#5bbf85")],
             )
 
+        self.donate_button.configure(bootstyle=self.donate_style)
         self.style.configure("Success-Inverse.TLabel", background="#18813b", foreground="#ffffff")
 
         # Update all empty entries to Default style so background matches theme
@@ -532,6 +538,9 @@ class WordleSolverApp(tb.Window):
 
         threading.Thread(target=worker, daemon=True).start()
 
+    def donate(self):
+        pass
+
     def reset_inputs(self):
         """
         Resets all input entries to empty strings and the default entry style.
@@ -627,7 +636,7 @@ class WordleSolverApp(tb.Window):
         """
         # Use grid manager for better layout control
         self.right_frame.columnconfigure(0, weight=1)
-        self.right_frame.rowconfigure(3, weight=1)  # space above the reset button
+        self.right_frame.rowconfigure(4, weight=1)  # space above the reset button
 
         self.submit_button = tb.Button(
             self.right_frame,
@@ -645,6 +654,14 @@ class WordleSolverApp(tb.Window):
         )
         self.dict_button.grid(row=1, column=0, sticky="ew", pady=5, ipady=5)
 
+        self.donate_button = tb.Button(
+            self.right_frame,
+            text="Donate ❤",
+            bootstyle=self.donate_style,
+            command=self.donate,
+        )
+        self.donate_button.grid(row=2, column=0, sticky="ew", pady=5, ipady=5)
+
         self.dark_mode_var = tb.BooleanVar(value=False)
 
         self.dark_toggle = tb.Checkbutton(
@@ -654,7 +671,7 @@ class WordleSolverApp(tb.Window):
             bootstyle="square-toggle",
             command=self.toggle_theme,
         )
-        self.dark_toggle.grid(row=2, column=0, sticky="ew", pady=10)
+        self.dark_toggle.grid(row=3, column=0, sticky="ew", pady=10)
 
         self.howtoplay_button = tb.Button(
             self.right_frame,
@@ -662,7 +679,7 @@ class WordleSolverApp(tb.Window):
             bootstyle=SUCCESS,
             command=self.how_to_play,
         )
-        self.howtoplay_button.grid(row=5, column=0, sticky="ew,s", pady=5, ipady=5)
+        self.howtoplay_button.grid(row=6, column=0, sticky="ew,s", pady=5, ipady=5)
 
         self.bestwords_button = tb.Button(
             self.right_frame,
@@ -670,7 +687,7 @@ class WordleSolverApp(tb.Window):
             bootstyle=DANGER,
             command=self.best_words,
         )
-        self.bestwords_button.grid(row=4, column=0, sticky="ew,s", pady=5, ipady=5)
+        self.bestwords_button.grid(row=5, column=0, sticky="ew,s", pady=5, ipady=5)
 
         self.reset_button = tb.Button(
             self.right_frame,
@@ -678,7 +695,7 @@ class WordleSolverApp(tb.Window):
             bootstyle=WARNING,
             command=self.reset_inputs,
         )
-        self.reset_button.grid(row=6, column=0, sticky="ew,s", pady=5, ipady=5)
+        self.reset_button.grid(row=7, column=0, sticky="ew,s", pady=5, ipady=5)
 
     def get_all_entries(self):
         """
