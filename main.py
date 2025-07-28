@@ -6,6 +6,7 @@ from tkinter import messagebox
 from tkinter import PhotoImage
 import threading
 from idlelib.tooltip import Hovertip
+import webbrowser
 
 
 class WordleSolverApp(tb.Window):
@@ -48,7 +49,9 @@ class WordleSolverApp(tb.Window):
         self.style.configure("primary.TButton", font=("Arial", 16, "bold"))
         self.style.configure("info.TButton", font=("Arial", 16, "bold"))
         self.style.configure("warning.TButton", font=("Arial", 16, "bold"))
+        self.style.configure("success.TButton", font=("Arial", 16, "bold"))
         self.style.configure("danger.TButton", font=("Arial", 11, "bold"))
+        self.style.configure("secondary.TButton", font=("Arial", 16, "bold"))
         self.style.configure("TLabelframe.Label", font=("Segoe UI", 10, "bold"))
         self.style.configure(
             "OutlinePrimaryBold.TButton",
@@ -282,6 +285,110 @@ class WordleSolverApp(tb.Window):
 
         self.geometry(f"{main_width}x{main_height}+{x}+{y}")
         self.result_window.geometry(f"{result_width}x{result_height}+{x + main_width}+{y}")
+
+    def how_to_play(self):
+        top = tb.Toplevel(self)
+        top.title("How To Play")
+        top.resizable(False, False)
+        top.iconphoto(False, self.icon)
+
+        # Center the window
+        top.withdraw()
+        top.update_idletasks()
+        width = 550
+        height = 700
+        x = (top.winfo_screenwidth() // 2) - (width // 2)
+        y = (top.winfo_screenheight() // 2) - (height // 2)
+        top.geometry(f"{width}x{height}+{x}+{y}")
+        top.deiconify()
+
+        # Modal behavior
+        top.grab_set()
+        top.transient(self)
+
+        # Main frame
+        frame = tb.Frame(top, padding=20)
+        frame.grid(row=0, column=0, sticky="nsew")
+        top.rowconfigure(0, weight=1)
+        top.columnconfigure(0, weight=1)
+
+        def section_title(text):
+            return tb.Label(frame, text=text, font=("Segoe UI", 14, "bold"))
+
+        def section_body(text):
+            return tb.Label(frame, text=text, font=("Segoe UI", 11), wraplength=480, justify="left")
+
+        row = 0
+
+        # GOAL
+        section_title("🎯 Goal").grid(row=row, column=0, columnspan=2, sticky="w", pady=(0, 2))
+        row += 1
+        section_body("Guess the hidden 5-letter word in 6 tries or less.").grid(
+            row=row, column=0, columnspan=2, sticky="w", pady=(0, 10)
+        )
+        row += 1
+
+        # Wordle link
+        section_title("🔗 Play the Original Wordle").grid(row=row, column=0, columnspan=2, sticky="w", pady=(0, 2))
+        row += 1
+        section_body("Click the button below to open Wordle in your browser.").grid(
+            row=row, column=0, columnspan=2, sticky="w"
+        )
+        row += 1
+
+        def open_wordle():
+            webbrowser.open_new("https://www.nytimes.com/games/wordle/")
+
+        tb.Button(frame, text="🔗 Open Wordle", bootstyle="link", command=open_wordle).grid(
+            row=row, column=0, columnspan=2, sticky="w", pady=(0, 10)
+        )
+        row += 1
+
+        # How to Guess
+        section_title("⌨️ How to Guess").grid(row=row, column=0, columnspan=2, sticky="w", pady=(0, 2))
+        row += 1
+        section_body("Enter a valid 5-letter English word each time you try.").grid(
+            row=row, column=0, columnspan=2, sticky="w", pady=(0, 10)
+        )
+        row += 1
+
+        # Color meanings
+        section_title("🎨 Color Codes").grid(row=row, column=0, columnspan=2, sticky="w", pady=(0, 2))
+        row += 1
+        section_body(
+            "🟩 Green: Correct letter in the correct spot\n🟨 Yellow: Correct letter but in the wrong spot\n⬛ Gray: Letter is not in the word"
+        ).grid(row=row, column=0, columnspan=2, sticky="w", pady=(0, 10))
+        row += 1
+
+        # Tips
+        section_title("💡 Tips").grid(row=row, column=0, columnspan=2, sticky="w", pady=(0, 2))
+        row += 1
+        section_body(
+            "- Start with words like 'raise', 'adieu', or 'salet'.\n- Use the 'Best Words to Start' feature to get suggestions."
+        ).grid(row=row, column=0, columnspan=2, sticky="w", pady=(0, 10))
+        row += 1
+
+        # How this app works
+        section_title("🆘 How to Use This App").grid(row=row, column=0, columnspan=2, sticky="w", pady=(0, 2))
+        row += 1
+        section_body(
+            "- After each guess, update the grid using the boxes.\n- Green = correct letter & position\n- Yellow = correct letter, wrong position\n- Gray = letter not in the word"
+        ).grid(row=row, column=0, columnspan=2, sticky="w", pady=(0, 20))
+        row += 1
+
+        # Final message
+        section_body("Good luck and have fun! 🧩").grid(row=row, column=0, columnspan=2, sticky="w", pady=(0, 20))
+        row += 1
+
+        # Close button
+        close_button = tb.Button(frame, text="Close", bootstyle="secondary", command=top.destroy)
+        close_button.configure(width=12, padding=10)
+        close_button.grid(row=row, column=1, sticky="e")
+
+        # Expand settings
+        frame.rowconfigure(row, weight=1)
+        frame.columnconfigure(0, weight=1)
+        frame.columnconfigure(1, weight=0)
 
     def best_words(self):
         """
@@ -535,6 +642,14 @@ class WordleSolverApp(tb.Window):
         )
         self.dark_toggle.grid(row=2, column=0, sticky="ew", pady=10)
 
+        self.howtoplay_button = tb.Button(
+            self.right_frame,
+            text="How To Play",
+            bootstyle=SUCCESS,
+            command=self.how_to_play,
+        )
+        self.howtoplay_button.grid(row=5, column=0, sticky="ew,s", pady=5, ipady=5)
+
         self.bestwords_button = tb.Button(
             self.right_frame,
             text="Best Words To Start",
@@ -549,7 +664,7 @@ class WordleSolverApp(tb.Window):
             bootstyle=WARNING,
             command=self.reset_inputs,
         )
-        self.reset_button.grid(row=5, column=0, sticky="ew,s", pady=5, ipady=5)
+        self.reset_button.grid(row=6, column=0, sticky="ew,s", pady=5, ipady=5)
 
     def get_all_entries(self):
         """
