@@ -296,7 +296,7 @@ class WordleSolverApp(tb.Window):
         top.withdraw()
         top.update_idletasks()
         width = 550
-        height = 700
+        height = 680
         x = (top.winfo_screenwidth() // 2) - (width // 2)
         y = (top.winfo_screenheight() // 2) - (height // 2)
         top.geometry(f"{width}x{height}+{x}+{y}")
@@ -345,7 +345,7 @@ class WordleSolverApp(tb.Window):
         row += 1
 
         # How to Guess
-        section_title("⌨️ How to Guess").grid(row=row, column=0, columnspan=2, sticky="w", pady=(0, 2))
+        section_title("📝 How to Guess").grid(row=row, column=0, columnspan=2, sticky="w", pady=(0, 2))
         row += 1
         section_body("Enter a valid 5-letter English word each time you try.").grid(
             row=row, column=0, columnspan=2, sticky="w", pady=(0, 10)
@@ -364,7 +364,7 @@ class WordleSolverApp(tb.Window):
         section_title("💡 Tips").grid(row=row, column=0, columnspan=2, sticky="w", pady=(0, 2))
         row += 1
         section_body(
-            "- Start with words like 'raise', 'adieu', or 'salet'.\n- Use the 'Best Words to Start' feature to get suggestions."
+            "- Start with words like 'RAISE', 'AEROS', or 'ANISE'.\n- Use the 'Best Words to Start' feature to get suggestions."
         ).grid(row=row, column=0, columnspan=2, sticky="w", pady=(0, 10))
         row += 1
 
