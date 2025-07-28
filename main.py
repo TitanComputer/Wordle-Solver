@@ -289,6 +289,18 @@ class WordleSolverApp(tb.Window):
         self.result_window.geometry(f"{result_width}x{result_height}+{x + main_width}+{y}")
 
     def how_to_play(self):
+        """
+        Displays the 'How To Play' guide in a new window.
+
+        This method creates a top-level window that provides instructions on how to play the Wordle game.
+        It includes sections for the game's goal, a link to the original Wordle, guidelines on how to guess,
+        explanations of color codes, tips for playing, instructions on using the app, and a final motivational
+        message. The window is centered on the screen and features a 'Close' button to exit the guide.
+
+        The guide is displayed in a modal window to ensure the user's focus, and it uses a grid layout to organize
+        sections with titles and descriptive text.
+        """
+
         top = tb.Toplevel(self)
         top.title("How To Play")
         top.resizable(False, False)
