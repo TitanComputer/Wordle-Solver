@@ -8,6 +8,8 @@ import threading
 from idlelib.tooltip import Hovertip
 import webbrowser
 
+APP_VERSION = "1.2.0"
+
 
 class WordleSolverApp(tb.Window):
     def __init__(self):
@@ -23,7 +25,7 @@ class WordleSolverApp(tb.Window):
 
         self.apply_custom_styles()
 
-        self.title("Wordle Solver")
+        self.title(f"Wordle Solver v{APP_VERSION}")
         self.withdraw()
         self.iconphoto(False, self.icon)
         self.minsize(550, 650)
