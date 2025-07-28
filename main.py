@@ -16,6 +16,7 @@ class WordleSolverApp(tb.Window):
         self.current_theme = "litera"  # light theme by default
         super().__init__(themename=self.current_theme)
         self.icon = PhotoImage(file="icon.png")
+        self.heart_image = PhotoImage(file="heart.png")
 
         self.style.configure("Default.TEntry", fieldbackground="white", foreground="#000000")
         self.style.configure("Known.TEntry", fieldbackground="#6aaa64", foreground="#ffffff")
@@ -656,10 +657,13 @@ class WordleSolverApp(tb.Window):
 
         self.donate_button = tb.Button(
             self.right_frame,
-            text="Donate ❤ ",
+            text="Donate",
+            image=self.heart_image,
+            compound="right",  # می‌تونی "left" هم بذاری
             bootstyle=self.donate_style,
             command=self.donate,
         )
+        self.donate_button.image = self.heart_image  # نگه داشتن تصویر
         self.donate_button.grid(row=2, column=0, sticky="ew", pady=5, ipady=5)
 
         self.dark_mode_var = tb.BooleanVar(value=False)
