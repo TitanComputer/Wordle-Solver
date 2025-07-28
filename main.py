@@ -656,7 +656,7 @@ class WordleSolverApp(tb.Window):
 
         self.donate_button = tb.Button(
             self.right_frame,
-            text="Donate ❤",
+            text="Donate ❤ ",
             bootstyle=self.donate_style,
             command=self.donate,
         )
