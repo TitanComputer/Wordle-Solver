@@ -23,6 +23,14 @@ This tool helps users find possible answers based on the feedback from their pre
 
 <img width="1008" height="682" alt="Untitled" src="https://github.com/user-attachments/assets/7c49d857-64a2-4fde-88cd-8e9f4782bbc3" />
 
+### 🎬 Usage Guide (Video)
+
+
+
+https://github.com/user-attachments/assets/54eac32e-0a36-4084-b4b5-417c0724e505
+
+
+
 ## 📥 Download
 
 You can download the latest compiled `.exe` version from the [Releases](https://github.com/TitanComputer/Wordle-Solver/releases/latest) section.  
