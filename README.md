@@ -21,9 +21,7 @@ This tool helps users find possible answers based on the feedback from their pre
 
 ## 🖼️ Screenshots
 
-<img width="1007" height="682" alt="image" src="https://github.com/user-attachments/assets/4de510d0-76c8-42c8-b803-c00847e42269" />
-
-
+<img width="1008" height="682" alt="Untitled" src="https://github.com/user-attachments/assets/7c49d857-64a2-4fde-88cd-8e9f4782bbc3" />
 
 ## 📥 Download
 
