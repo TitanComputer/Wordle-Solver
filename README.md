@@ -25,11 +25,7 @@ This tool helps users find possible answers based on the feedback from their pre
 
 ### 🎬 Usage Guide (Video)
 
-
-
 https://github.com/user-attachments/assets/54eac32e-0a36-4084-b4b5-417c0724e505
-
-
 
 ## 📥 Download
 
