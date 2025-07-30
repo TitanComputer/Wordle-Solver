@@ -113,6 +113,8 @@ wordle_solver/
 │   └── words_filtered.txt      # Dictionary of valid 5-letter words
 ├── README.md                   # Project documentation
 ├── icon.png                    # Project icon
+├── heart.png                   # Heart Logo
+├── donate.png                  # Donate Picture
 └── requirements.txt            # Python dependencies
 ```
 ## 🎨 Icon Credit
