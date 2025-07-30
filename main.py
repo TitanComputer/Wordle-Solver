@@ -540,6 +540,20 @@ class WordleSolverApp(tb.Window):
         threading.Thread(target=worker, daemon=True).start()
 
     def donate(self):
+        """
+        Opens a donation window with options to support the project.
+
+        This method creates a top-level window allowing users to make a donation.
+        The window includes a clickable donation image, a label for a USDT (Tether)
+        wallet address, a read-only entry field displaying the wallet address, and
+        a 'Copy' button to copy the wallet address to the clipboard. The donation
+        image opens a link when clicked, and the window is centered on the screen
+        with a fixed size.
+
+        The method also ensures the window behaves modally and provides feedback
+        via a tooltip when the wallet address is copied.
+        """
+
         top = tb.Toplevel(self)
         top.title("Donate ❤")
         top.resizable(False, False)
