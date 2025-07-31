@@ -130,7 +130,7 @@ The executable was built using [`Nuitka`](https://nuitka.net/) and [`UPX`](https
 You can build the standalone executable using the following command:
 
 ```bash
-.\venv\Scripts\python.exe -m nuitka --jobs=4 --enable-plugin=upx --upx-binary="YOUR PATH\upx.exe" --enable-plugin=multiprocessing --lto=yes --enable-plugin=tk-inter --windows-console-mode=disable --follow-imports --windows-icon-from-ico="icon.ico" --include-data-dir=assets=assets --onefile --standalone --msvc=latest main.py
+.\venv\Scripts\python.exe -m nuitka --jobs=4 --enable-plugin=upx --upx-binary="YOUR PATH\upx.exe" --enable-plugin=multiprocessing --lto=yes --enable-plugin=tk-inter --windows-console-mode=disable --follow-imports --windows-icon-from-ico="icon.ico" --include-data-dir=assets=assets --python-flag=no_site,no_asserts,no_docstrings --onefile --standalone --msvc=latest main.py
 ```
 
 ## 🤝 Contributing
