@@ -12,19 +12,12 @@ import sys
 APP_VERSION = "1.3.0"
 
 
-def resource_path(relative_path):
-    """Get absolute path to resource, works for Nuitka onefile builds."""
-    if getattr(sys, "frozen", False):
-        return os.path.join(sys._MEIPASS, relative_path)
-    return os.path.join(os.path.abspath("."), relative_path)
-
-
 class WordleSolverApp(tb.Window):
     def __init__(self):
         self.current_theme = "litera"  # light theme by default
         super().__init__(themename=self.current_theme)
-        self.icon = PhotoImage(file=resource_path(os.path.join("assets", "icon.png")))
-        self.heart_image = PhotoImage(file=resource_path(os.path.join("assets", "heart.png")))
+        self.icon = PhotoImage(file=self.resource_path(os.path.join("assets", "icon.png")))
+        self.heart_image = PhotoImage(file=self.resource_path(os.path.join("assets", "heart.png")))
 
         self.style.configure("Default.TEntry", fieldbackground="white", foreground="#000000")
         self.style.configure("Known.TEntry", fieldbackground="#6aaa64", foreground="#ffffff")
@@ -47,6 +40,10 @@ class WordleSolverApp(tb.Window):
         self.analyzer = None
 
         self.setup_layout()
+
+    def resource_path(self, relative_path):
+        temp_dir = os.path.dirname(__file__)
+        return os.path.join(temp_dir, relative_path)
 
     def apply_custom_styles(self):
         # Buttons
@@ -583,7 +580,7 @@ class WordleSolverApp(tb.Window):
         # ==== Layout starts ====
 
         # Donate image (clickable)
-        donate_img = PhotoImage(file=resource_path(os.path.join("assets", "donate.png")))
+        donate_img = PhotoImage(file=self.resource_path(os.path.join("assets", "donate.png")))
         donate_button = tb.Label(top, image=donate_img, cursor="hand2")
         donate_button.grid(row=0, column=0, columnspan=2, pady=(30, 20))
         donate_button.image = donate_img
