@@ -124,8 +124,8 @@ The application icon used in this project is sourced from [Flaticon](https://www
 
 **Puzzle icon** created by [monkik](https://www.flaticon.com/authors/monkik) – [Flaticon](https://www.flaticon.com/)
 
-## 🛠 Compiled with Nuitka
-The executable was built using [`Nuitka`](https://nuitka.net/) for better performance and compactness.
+## 🛠 Compiled with Nuitka and UPX
+The executable was built using [`Nuitka`](https://nuitka.net/) and [`UPX`](https://github.com/upx/upx) for better performance and compactness.
 
 You can build the standalone executable using the following command:
 
