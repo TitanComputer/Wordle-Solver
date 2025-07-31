@@ -9,7 +9,7 @@ from idlelib.tooltip import Hovertip
 import webbrowser
 import sys
 
-APP_VERSION = "1.2.0"
+APP_VERSION = "1.3.0"
 
 
 def resource_path(relative_path):
