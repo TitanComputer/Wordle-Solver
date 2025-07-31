@@ -975,7 +975,7 @@ class WordleSolverApp(tb.Window):
         def worker():
             dict_path = "dict/words.txt"
             filtered_path = "dict/words_filtered.txt"
-            dict_url = "https://raw.githubusercontent.com/tabatkins/wordle-list/refs/heads/main/words"
+            dict_url = "https://github.com/TitanComputer/wordle-list/raw/refs/heads/main/words"
 
             if os.path.exists(dict_path):
                 result = messagebox.askyesno(

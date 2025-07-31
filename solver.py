@@ -176,7 +176,7 @@ class LetterFrequencyAnalyzer:
 
 
 if __name__ == "__main__":
-    dict_url = "https://raw.githubusercontent.com/tabatkins/wordle-list/refs/heads/main/words"
+    dict_url = "https://github.com/TitanComputer/wordle-list/raw/refs/heads/main/words"
 
     downloader = DictionaryDownloader(dict_url)
     downloader.download()
