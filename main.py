@@ -9,7 +9,8 @@ from idlelib.tooltip import Hovertip
 import webbrowser
 import sys
 
-APP_VERSION = "1.3.0"
+APP_VERSION = "1.4.0"
+APP_NAME = "Wordle Solver"
 
 
 class WordleSolverApp(tb.Window):
@@ -27,7 +28,7 @@ class WordleSolverApp(tb.Window):
 
         self.apply_custom_styles()
 
-        self.title(f"Wordle Solver v{APP_VERSION}")
+        self.title(f"{APP_NAME} v{APP_VERSION}")
         self.withdraw()
         self.iconphoto(False, self.icon)
         self.minsize(550, 650)
@@ -118,6 +119,16 @@ class WordleSolverApp(tb.Window):
 
         # Checkbutton
         self.style.configure("Square.Toggle", font=("Arial", 12, "bold"))
+
+    def _disable_results_window(self):
+        if hasattr(self, "result_window") and self.result_window.winfo_exists():
+            self.result_window.attributes("-disabled", True)
+
+    def _enable_results_window(self):
+        if hasattr(self, "result_window") and self.result_window.winfo_exists():
+            self.result_window.attributes("-disabled", False)
+            self.result_window.lift()
+            self.result_window.focus()
 
     def toggle_theme(self):
         """
@@ -312,25 +323,31 @@ class WordleSolverApp(tb.Window):
         The guide is displayed in a modal window to ensure the user's focus, and it uses a grid layout to organize
         sections with titles and descriptive text.
         """
-
+        self.attributes("-disabled", True)
+        self._disable_results_window()
         top = tb.Toplevel(self)
+        top.withdraw()
         top.title("How To Play")
         top.resizable(False, False)
         top.iconphoto(False, self.icon)
 
+        def on_close():
+            top.grab_release()
+            top.destroy()
+            self.attributes("-disabled", False)
+            self._enable_results_window()
+            self.focus_force()
+
+        top.protocol("WM_DELETE_WINDOW", on_close)
+
         # Center the window
-        top.withdraw()
+
         top.update_idletasks()
         width = 550
         height = 680
         x = (top.winfo_screenwidth() // 2) - (width // 2)
         y = (top.winfo_screenheight() // 2) - (height // 2)
         top.geometry(f"{width}x{height}+{x}+{y}")
-        top.deiconify()
-
-        # Modal behavior
-        top.grab_set()
-        top.transient(self)
 
         # Main frame
         frame = tb.Frame(top, padding=20)
@@ -407,7 +424,7 @@ class WordleSolverApp(tb.Window):
         row += 1
 
         # Close button
-        close_button = tb.Button(frame, text="Close", bootstyle="secondary", command=top.destroy)
+        close_button = tb.Button(frame, text="Close", bootstyle="secondary", command=on_close)
         close_button.configure(width=12, padding=10)
         close_button.grid(row=row, column=1, sticky="e")
 
@@ -415,6 +432,7 @@ class WordleSolverApp(tb.Window):
         frame.rowconfigure(row, weight=1)
         frame.columnconfigure(0, weight=1)
         frame.columnconfigure(1, weight=0)
+        top.deiconify()
 
     def best_words(self):
         """
@@ -461,9 +479,20 @@ class WordleSolverApp(tb.Window):
             self.after(0, lambda: show_results(letter_freqs, best_words))
 
         def show_results(letter_freqs, best_words):
+            self.attributes("-disabled", True)
+            self._disable_results_window()
             top = tb.Toplevel(self)
             top.title("Letter Frequency & Best Words To Start")
             top.resizable(False, False)
+
+            def on_close():
+                top.grab_release()
+                top.destroy()
+                self.attributes("-disabled", False)
+                self._enable_results_window()
+                self.focus_force()
+
+            top.protocol("WM_DELETE_WINDOW", on_close)
 
             # Center the window
             top.withdraw()
@@ -474,11 +503,6 @@ class WordleSolverApp(tb.Window):
             x = (top.winfo_screenwidth() // 2) - (width // 2)
             y = (top.winfo_screenheight() // 2) - (height // 2)
             top.geometry(f"{width}x{height}+{x}+{y}")
-            top.deiconify()
-
-            # Modal behavior
-            top.grab_set()
-            top.transient(self)
 
             # Configure grid for top-level to center container vertically
             top.grid_rowconfigure(0, weight=1)
@@ -541,6 +565,7 @@ class WordleSolverApp(tb.Window):
                         justify="center",
                         style="Success-Inverse.TLabel",
                     ).grid(row=i, column=0, sticky="ew", padx=10, pady=2)
+            top.deiconify()
 
         threading.Thread(target=worker, daemon=True).start()
 
@@ -558,10 +583,20 @@ class WordleSolverApp(tb.Window):
         The method also ensures the window behaves modally and provides feedback
         via a tooltip when the wallet address is copied.
         """
-
+        self.attributes("-disabled", True)
+        self._disable_results_window()
         top = tb.Toplevel(self)
         top.title("Donate ❤")
         top.resizable(False, False)
+
+        def on_close():
+            top.grab_release()
+            top.destroy()
+            self.attributes("-disabled", False)
+            self._enable_results_window()
+            self.focus_force()
+
+        top.protocol("WM_DELETE_WINDOW", on_close)
 
         # Center the window
         top.withdraw()
@@ -572,10 +607,6 @@ class WordleSolverApp(tb.Window):
         x = (top.winfo_screenwidth() // 2) - (width // 2)
         y = (top.winfo_screenheight() // 2) - (height // 2)
         top.geometry(f"{width}x{height}+{x}+{y}")
-        top.deiconify()
-
-        top.grab_set()
-        top.transient(self)
 
         # ==== Layout starts ====
 
@@ -632,6 +663,7 @@ class WordleSolverApp(tb.Window):
 
         # Make the first column expand
         top.grid_columnconfigure(0, weight=1)
+        top.deiconify()
 
     def reset_inputs(self):
         """
