@@ -1,7 +1,9 @@
 certifi==2025.7.9
 charset-normalizer==3.4.2
 idna==3.10
+ImageIO==2.37.2
 Nuitka==2.7.12
+numpy==2.3.5
 ordered-set==4.1.0
 pillow==10.4.0
 requests==2.32.4
