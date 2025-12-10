@@ -125,7 +125,7 @@ The application icon used in this project is sourced from [Flaticon](https://www
 **Puzzle icon** created by [monkik](https://www.flaticon.com/authors/monkik) – [Flaticon](https://www.flaticon.com/)
 
 ## 🛠 Compiled with Nuitka and UPX
-The executable was built using [`Nuitka`](https://nuitka.net/) and [`UPX`](https://github.com/upx/upx) for better performance and compactness.
+The executable was built using [`Nuitka`](https://nuitka.net/) and [`UPX`](https://github.com/upx/upx) for better performance and compactness, built automatically via GitHub Actions.
 
 You can build the standalone executable using the following command:
 
@@ -133,6 +133,11 @@ You can build the standalone executable using the following command:
 .\venv\Scripts\python.exe -m nuitka --jobs=4 --enable-plugin=upx --upx-binary="YOUR PATH\upx.exe" --enable-plugin=multiprocessing --lto=yes --enable-plugin=tk-inter --windows-console-mode=disable --follow-imports --windows-icon-from-ico="assets/icon.png" --include-data-dir=assets=assets --python-flag=no_site,no_asserts,no_docstrings,static_hashes --onefile --onefile-no-compression --standalone --msvc=latest --assume-yes-for-downloads main.py
 ```
 
+## 🚀 CI/CD
+
+The GitHub Actions workflow builds the binary on every release and attaches it as an artifact.
+
+---
 ## 🤝 Contributing
 Pull requests are welcome.
 If you have suggestions for improvements or new features, feel free to open an issue.
