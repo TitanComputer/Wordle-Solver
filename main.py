@@ -1,16 +1,61 @@
+import sys
+import time
 from solver import *
-import ttkbootstrap as tb
-from ttkbootstrap.constants import *
+import tkinter as tk
 from tkinter import StringVar
 from tkinter import messagebox
 from tkinter import PhotoImage
+import ttkbootstrap as tb
+from ttkbootstrap.constants import *
 import threading
 from idlelib.tooltip import Hovertip
 import webbrowser
-import sys
 
-APP_VERSION = "1.4.0"
+APP_VERSION = "1.5.0"
 APP_NAME = "Wordle Solver"
+
+# --- Single Instance Logic START with Timeout ---
+APP_LOCK_DIR = os.path.join(os.getenv("LOCALAPPDATA", os.getenv("HOME", "/tmp")), APP_NAME)
+LOCK_FILE = os.path.join(APP_LOCK_DIR, "app.lock")
+LOCK_TIMEOUT_SECONDS = 60
+
+os.makedirs(APP_LOCK_DIR, exist_ok=True)
+IS_LOCK_CREATED = False
+
+if os.path.exists(LOCK_FILE):
+    try:
+        lock_age = time.time() - os.path.getmtime(LOCK_FILE)
+
+        if lock_age > LOCK_TIMEOUT_SECONDS:
+            os.remove(LOCK_FILE)
+            print(f"Removed stale lock file (Age: {int(lock_age)}s).")
+        else:
+            try:
+                temp_root = tk.Tk()
+                temp_root.withdraw()
+                messagebox.showwarning(
+                    f"{APP_NAME} v{APP_VERSION}",
+                    f"{APP_NAME} is already running.\nOnly one instance is allowed.",
+                )
+                temp_root.destroy()
+            except Exception:
+                print("Application is already running.")
+
+            sys.exit(0)
+
+    except Exception as e:
+        print(f"Error checking lock file: {e}. Exiting.")
+        sys.exit(0)
+
+try:
+    with open(LOCK_FILE, "w") as f:
+        f.write(str(os.getpid()))
+    IS_LOCK_CREATED = True
+except Exception as e:
+    print(f"Could not create lock file: {e}")
+    sys.exit(1)
+
+# --- Single Instance Logic END with Timeout ---
 
 
 class WordleSolverApp(tb.Window):
@@ -19,6 +64,7 @@ class WordleSolverApp(tb.Window):
         super().__init__(themename=self.current_theme)
         self.icon = PhotoImage(file=self.resource_path(os.path.join("assets", "icon.png")))
         self.heart_image = PhotoImage(file=self.resource_path(os.path.join("assets", "heart.png")))
+        self.protocol("WM_DELETE_WINDOW", self.on_close)
 
         self.style.configure("Default.TEntry", fieldbackground="white", foreground="#000000")
         self.style.configure("Known.TEntry", fieldbackground="#6aaa64", foreground="#ffffff")
@@ -41,6 +87,55 @@ class WordleSolverApp(tb.Window):
         self.analyzer = None
 
         self.setup_layout()
+
+        # --- Lock Updater Control START ---
+        self.lock_refresh_active = True
+        if "IS_LOCK_CREATED" in globals() and IS_LOCK_CREATED:
+            self.lock_thread = threading.Thread(target=self._lock_updater, daemon=True)
+            self.lock_thread.start()
+            print("Lock refresh started.")
+        # --- Lock Updater Control END ---
+
+    def on_close(self):
+        """
+        Handles application shutdown, cleans up the lock file, saves config,
+        and checks if a process is running before exiting.
+        """
+
+        # --- Single Instance Cleanup START ---
+        global IS_LOCK_CREATED
+        if "IS_LOCK_CREATED" in globals() and IS_LOCK_CREATED:
+            self.lock_refresh_active = False
+            try:
+                if self.lock_thread.is_alive():
+                    self.lock_thread.join(0.5)
+                os.remove(LOCK_FILE)
+            except Exception as e:
+                print(f"Could not remove lock file: {e}")
+        # --- Single Instance Cleanup END ---
+
+        self.destroy()
+
+    def _lock_updater(self):
+        """
+        Periodically updates the lock file timestamp to keep the lock fresh.
+        Runs in a separate thread.
+        """
+        global IS_LOCK_CREATED
+        if not IS_LOCK_CREATED:
+            return
+
+        while self.lock_refresh_active:
+            try:
+                os.utime(LOCK_FILE, None)
+                # print("Lock refreshed.")
+            except Exception as e:
+                print(f"Error refreshing lock: {e}")
+                break
+
+            time.sleep(LOCK_TIMEOUT_SECONDS / 2)
+
+        print("Lock refresh stopped.")
 
     def resource_path(self, relative_path):
         temp_dir = os.path.dirname(__file__)
